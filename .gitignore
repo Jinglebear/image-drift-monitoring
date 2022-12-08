@@ -1,0 +1,7 @@
+camera_images/*
+landscape_baseline/*
+landscape_images/*
+*.bin
+*.ipynb
+*.html
+*.json
