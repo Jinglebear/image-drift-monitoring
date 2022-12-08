@@ -65,11 +65,13 @@ def create_metrics(target_profile: DatasetProfileView, referece_profile: Dataset
     except Exception as e:
         logger.exception('Exception in create_metrics(): {}'.format(e))
 
-""" create profile summary """
-""" ********************** """
-def create_profile_summary(profile: DatasetProfileView,logger : logging.Logger) ->  Optional[Dict[str, Any]]:
+""" create profile summary json"""
+""" ************************** """
+def create_profile_summary_json(profile: DatasetProfileView,path :str, logger : logging.Logger) ->  str:
     try:
-        return generate_profile_summary(target_view=profile,config=None)
+        with open('{}.json'.format(path), 'w') as output_file:
+            output_file.write(str(generate_profile_summary(target_view=uncompound._uncompound_dataset_profile(profile),config=None)['profile_from_whylogs']))
+        logger.info('Created profile summary json for {}'.format(path))
     except Exception as e:
         logger.exception('Exception in create_profile_summary(): {}'.format(e))
 
@@ -88,41 +90,34 @@ def main():
     logger.setLevel(logging.DEBUG)
     logger.addHandler(handler)
 
-    """ log baseline """
-    profile_baseline = log_data('/home/jingle/image-drift/landscape_data/landscape_baseline/baseline/',my_datetime,logger)
-    serialize_profile(profile_baseline,'baseline')
-    """ log landscape """
-    profile_landscape = log_data('/home/jingle/image-drift/landscape_data/landscape_images/landscape/',my_datetime,logger)
-    serialize_profile(profile_landscape,'landscape')
-    """ log camera """
-    profile_camera = log_data('/home/jingle/image-drift/landscape_data/camera_images/camera/',my_datetime,logger)
-    serialize_profile(profile_camera,'camera')
+    LANDSCAPE_DATA_RAW_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/landscape_data_raw'
+    
+    LANDSCAPE_BINS_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/bins'
+
+    LANDSCAPE_JSON_PROFILES_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/profile_summaries'
 
 
-    # """ load baseline """
-    # profile_baseline = deserialize_profile('baseline.bin')
-    # """ load landscape """
-    # profile_landscape = deserialize_profile('landscape.bin')
-    # """ load camera """
-    # profile_camera = deserialize_profile('camera.bin')
+    """ log  & serialize landscape dataset  """
+    profile_baseline = log_data('{}/landscape_baseline/baseline/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
+    serialize_profile(profile_baseline,'{}/baseline'.format(LANDSCAPE_BINS_PATH),logger)
+
+    profile_landscape = log_data('{}/landscape_images/landscape/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
+    serialize_profile(profile_landscape,'{}/landscape'.format(LANDSCAPE_BINS_PATH),logger)
+
+    profile_camera = log_data('{}/camera_images/camera/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
+    serialize_profile(profile_camera,'{}/camera'.format(LANDSCAPE_BINS_PATH),logger)
 
 
-    # _viz = NotebookProfileVisualizer()
-    # _viz.set_profiles(profile_baseline)
-    # tmp = _viz.profile_summary()
-    # # print(type(tmp))
-    # # with open("data.html", "w") as file:
-    # #     file.write(tmp.data)
+    """ load & deserialize landscape dataset """
+    profile_baseline = deserialize_profile('{}/baseline.bin'.format(LANDSCAPE_BINS_PATH),logger)
+    profile_landscape = deserialize_profile('{}/landscape.bin'.format(LANDSCAPE_BINS_PATH),logger)
+    profile_camera = deserialize_profile('{}/camera.bin'.format(LANDSCAPE_BINS_PATH),logger)
 
-    # """ 
-    # Generate Profile Summary without Vizualizer    
 
-    # """
-    # profile_baseline_uncompound = uncompound._uncompound_dataset_profile(profile_baseline)
-    # tmp2 = generate_profile_summary(target_view=profile_baseline_uncompound,config=None)
-    # with open('output.json', 'w') as output_file:
-    #     output_file.write(str(tmp2['profile_from_whylogs']))
-
+    """ create summary json's """
+    create_profile_summary_json(profile_baseline,'{}/baseline'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
+    create_profile_summary_json(profile_landscape,'{}/landscape'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
+    create_profile_summary_json(profile_camera,'{}/camera'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
     
     
 
