@@ -1,8 +1,10 @@
+import json
 import logging
 import os
 from datetime import datetime
 from typing import Any, Dict, Optional
 
+import pandas as pd
 import pytz
 from PIL import Image
 from progressbar import progressbar
@@ -74,8 +76,34 @@ def create_profile_summary_json(profile: DatasetProfileView,path :str, logger : 
         logger.info('Created profile summary json for {}'.format(path))
     except Exception as e:
         logger.exception('Exception in create_profile_summary(): {}'.format(e))
+    
+""" create profile comparison json """
+""" ****************************** """
+def create_profile_compare_summary_json(target_profile: DatasetProfileView, ref_profile: DatasetProfileView,path :str,logger : logging.Logger) -> str:
+    try:
+        with open('{}.json'.format(path), 'w') as output_file:
+            target_uncompound = uncompound._uncompound_dataset_profile(target_profile)
+            ref_uncompound = uncompound._uncompound_dataset_profile(ref_profile)
+            output_file.write(str(generate_summaries(target_view=target_uncompound,ref_view=ref_uncompound,config=None)['reference_profile_from_whylogs']))
+    except Exception as e:
+        logger.exception('Exception in create_profile_compare_summary_json(): {}'.format(e))        
 
-        
+""" create metric and p_val dataframes """
+""" ********************************** """
+def create_drift_metric_df_from_comp_summary_json(path:str, logger : logging.Logger) -> pd.DataFrame:
+    try:
+        with open(path, 'r') as input:
+            data= json.load(input)
+        tmp = { "metric" : [], "p_val": []}
+        for metric in data['columns']:
+            tmp['metric'].append(metric)
+            tmp['p_val'].append(data['columns'][metric]['drift_from_ref'])
+        df = pd.DataFrame.from_dict(tmp)
+        df.sort_values(by=['metric'],inplace=True)
+        return df
+    except Exception as e:
+        logger.exception('Exception in create_drift_metric_df_from_comp_summary_json(): {}'.format(e))
+
 
 def main():
     
@@ -96,16 +124,17 @@ def main():
 
     LANDSCAPE_JSON_PROFILES_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/profile_summaries'
 
+    LANDSCAPE_JSON_COMP_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/profile_comps'
 
-    """ log  & serialize landscape dataset  """
-    profile_baseline = log_data('{}/landscape_baseline/baseline/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
-    serialize_profile(profile_baseline,'{}/baseline'.format(LANDSCAPE_BINS_PATH),logger)
+    # """ log  & serialize landscape dataset  """
+    # profile_baseline = log_data('{}/landscape_baseline/baseline/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
+    # serialize_profile(profile_baseline,'{}/baseline'.format(LANDSCAPE_BINS_PATH),logger)
 
-    profile_landscape = log_data('{}/landscape_images/landscape/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
-    serialize_profile(profile_landscape,'{}/landscape'.format(LANDSCAPE_BINS_PATH),logger)
+    # profile_landscape = log_data('{}/landscape_images/landscape/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
+    # serialize_profile(profile_landscape,'{}/landscape'.format(LANDSCAPE_BINS_PATH),logger)
 
-    profile_camera = log_data('{}/camera_images/camera/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
-    serialize_profile(profile_camera,'{}/camera'.format(LANDSCAPE_BINS_PATH),logger)
+    # profile_camera = log_data('{}/camera_images/camera/'.format(LANDSCAPE_DATA_RAW_PATH),my_datetime,logger)
+    # serialize_profile(profile_camera,'{}/camera'.format(LANDSCAPE_BINS_PATH),logger)
 
 
     """ load & deserialize landscape dataset """
@@ -115,11 +144,27 @@ def main():
 
 
     """ create summary json's """
-    create_profile_summary_json(profile_baseline,'{}/baseline'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
-    create_profile_summary_json(profile_landscape,'{}/landscape'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
-    create_profile_summary_json(profile_camera,'{}/camera'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
+    # create_profile_summary_json(profile_baseline,'{}/baseline'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
+    # create_profile_summary_json(profile_landscape,'{}/landscape'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
+    # create_profile_summary_json(profile_camera,'{}/camera'.format(LANDSCAPE_JSON_PROFILES_PATH),logger)
     
-    
+    """ crate profile comp json's """
+    # create_profile_compare_summary_json(profile_landscape,profile_baseline,'{}/landscape_v_baseline'.format(LANDSCAPE_JSON_COMP_PATH),logger)
+    # create_profile_compare_summary_json(profile_camera,profile_baseline,'{}/camera_v_baseline'.format(LANDSCAPE_JSON_COMP_PATH),logger)
+    create_profile_compare_summary_json(profile_landscape,profile_landscape,'{}/landscape_v_landscape'.format(LANDSCAPE_JSON_COMP_PATH),logger)
+
+    """ comparison jsons to dataframe """
+    pd.set_option("display.precision",20)
+    pd.set_option('max_colwidth', 800)
+
+    df_landscape_v_baseline = create_drift_metric_df_from_comp_summary_json(path='{}/landscape_v_baseline.json'.format(LANDSCAPE_JSON_COMP_PATH),logger=logger)
+    print(f'{"landscape_v_baseline":.^50}',"\n", df_landscape_v_baseline, "\n")
+
+    df_camera_v_baseline = create_drift_metric_df_from_comp_summary_json(path='{}/camera_v_baseline.json'.format(LANDSCAPE_JSON_COMP_PATH),logger=logger)
+    print(f'{"camera_v_baseline":.^50}', "\n",df_camera_v_baseline,"\n")
+
+    df_landscape_v_landscape = create_drift_metric_df_from_comp_summary_json(path='{}/landscape_v_landscape.json'.format(LANDSCAPE_JSON_COMP_PATH),logger=logger)
+    print(f'{"landscape_v_landscape":.^50}', "\n",df_landscape_v_landscape,"\n")
 
 if __name__ == "__main__":
     main()
