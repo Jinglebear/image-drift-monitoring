@@ -7,3 +7,5 @@ landscape_data*
 *.html
 *.json
 requirementsConda.txt
+*.csv
+*.png
