@@ -21,28 +21,26 @@ import random
 """ ****************************************************** """
 
 
-def log_data(data_directory: str, datetime: datetime, logger: logging.Logger, batch_size : int) -> DatasetProfileView:
+def log_data(data_directory: str, datetime: datetime, logger: logging.Logger, batch_size : int, shuffle : bool) -> DatasetProfileView:
     try:
         logger.info(
             'Started logging image data from: {}'.format(data_directory))
         profile = None
         data_directory_list =  os.listdir(data_directory)
-        random.shuffle(data_directory_list) # shuffle images 
-        for img_name, i in progressbar(data_directory_list):
-
-            if i == batch_size:
-                break
-            else:     
-                img = Image.open(data_directory + img_name)  # read in image
-                _ = log_image(img).profile()  # generate profile
-                # optionally set dataset_timestamp
-                _.set_dataset_timestamp(datetime)
-                _view = _.view()  # extract mergeable profile view
-                # merge each profile while looping
-                if profile is None:
-                    profile = _view
-                else:
-                    profile = profile.merge(_view)
+        if shuffle:
+            random.shuffle(data_directory_list) # shuffle images 
+        data_directory_list = data_directory_list[0:batch_size]
+        for img_name in progressbar(data_directory_list):
+            img = Image.open(data_directory + img_name)  # read in image
+            _ = log_image(img).profile()  # generate profile
+            # optionally set dataset_timestamp
+            _.set_dataset_timestamp(datetime)
+            _view = _.view()  # extract mergeable profile view
+            # merge each profile while looping
+            if profile is None:
+                profile = _view
+            else:
+                profile = profile.merge(_view)
         logger.info('Logged image data from: {} with batch size {}'.format(
             data_directory, profile.to_pandas()['image/Brightness.mean:counts/n']['image']))
         return profile
@@ -124,12 +122,20 @@ def create_drift_metric_df_from_comp_summary_json(path: str, logger: logging.Log
     try:
         with open(path, 'r') as input:
             data = json.load(input)
-        tmp = {"metric": [], "p_val": []}
+        tmp = {"metric": [], "p_val": [], "rating": []}
         for metric in data['columns']:
             tmp['metric'].append(metric)
-            tmp['p_val'].append(data['columns'][metric]['drift_from_ref'])
+            p_val = data['columns'][metric]['drift_from_ref']
+            tmp['p_val'].append(p_val)
+            if p_val <= 0.05:
+                tmp["rating"].append('Detected Drift (0.00 - 0.05)')
+            elif p_val <= 0.15:
+                tmp["rating"].append('Possible Drift (0.05 - 0.15)')
+            elif p_val <= 1.0:
+                tmp['rating'].append('No Drift (0.15 - 1.00)')
         df = pd.DataFrame.from_dict(tmp)
         df.sort_values(by=['metric'], inplace=True)
+        df.to_csv('{}.csv'.format(path[0:-5]))
         return df
     except Exception as e:
         logger.exception(
@@ -172,6 +178,11 @@ def main():
     # serialize_profile(
     #     profile_camera, '{}/camera'.format(LANDSCAPE_BINS_PATH), logger)
 
+    profile_baseline_200 = log_data(
+        '{}/landscape_baseline/baseline/'.format(LANDSCAPE_DATA_RAW_PATH), my_datetime, logger, 200, True)
+    serialize_profile(
+        profile_baseline_200, '{}/baseline_200'.format(LANDSCAPE_BINS_PATH), logger)
+
     """ load & deserialize landscape dataset """
     # profile_baseline = deserialize_profile(
     #     '{}/baseline.bin'.format(LANDSCAPE_BINS_PATH), logger)
@@ -195,25 +206,32 @@ def main():
     #     profile_camera, profile_baseline, '{}/camera_v_baseline'.format(LANDSCAPE_JSON_COMP_PATH), logger)
     # create_profile_compare_summary_json(
     #     profile_landscape, profile_landscape, '{}/landscape_v_landscape'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-
+    # create_profile_compare_summary_json(
+    #     profile_camera, profile_landscape, '{}/camera_v_landscape'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    
     """ comparison jsons to dataframe """
     pd.set_option("display.precision", 20)
     pd.set_option('max_colwidth', 800)
 
-    df_landscape_v_baseline = create_drift_metric_df_from_comp_summary_json(
-        path='{}/landscape_v_baseline.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    print(f'{"landscape_v_baseline":.^50}',
-          "\n", df_landscape_v_baseline, "\n")
+    # df_landscape_v_baseline = create_drift_metric_df_from_comp_summary_json(
+    #     path='{}/landscape_v_baseline.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # print(f'{"landscape_v_baseline":.^50}',
+    #       "\n", df_landscape_v_baseline, "\n")
 
     # df_camera_v_baseline = create_drift_metric_df_from_comp_summary_json(
     #     path='{}/camera_v_baseline.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    # print(f'{"camera_v_baseline":.^50}', "\n", df_camera_v_baseline, "\n")
+    # print(f'{"camera (200) v baseline (1800)":.^50}', "\n", df_camera_v_baseline, "\n")
 
     # df_landscape_v_landscape = create_drift_metric_df_from_comp_summary_json(
     #     path='{}/landscape_v_landscape.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
     # print(f'{"landscape_v_landscape":.^50}',
     #       "\n", df_landscape_v_landscape, "\n")
 
+    # df_camera_v_landscape = create_drift_metric_df_from_comp_summary_json(
+    #     path='{}/camera_v_landscape.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # print(f'{"camera (200) v landscape (200)":.^50}',
+    #       "\n", df_camera_v_landscape, "\n")
 
+    
 if __name__ == "__main__":
     main()
