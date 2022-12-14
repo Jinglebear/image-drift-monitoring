@@ -165,6 +165,7 @@ def main():
     LANDSCAPE_JSON_COMP_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/profile_comps'
 
     LANDSCAPE_DATA_RAW_BASELINE_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/landscape_data_raw/landscape_baseline/baseline/'
+
     LANDSCAPE_DATA_RAW_CAMERA_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/landscape_data_raw/camera_images/camera/'
 
     """ comparison jsons to dataframe """
@@ -172,113 +173,143 @@ def main():
     pd.set_option('max_colwidth', 800)
 
     """ log  baseline profiles """
-    profile_baseline_1800 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 1800, True)
-    profile_baseline_900 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 900, True)
-    profile_baseline_450 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 450, True)
-    profile_baseline_200 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 200, True)
-    profile_baseline_150 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 150, True)
-    profile_baseline_100 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 100, True)
-    profile_baseline_50 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 50, True)
-    profile_baseline_25 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 25, True)
-    profile_baseline_15 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 15, True)
+    # profile_baseline_1800 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 1800, True)
+    # profile_baseline_900 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 900, True)
+    # profile_baseline_450 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 450, True)
+    # profile_baseline_200 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 200, True)
+    # profile_baseline_150 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 150, True)
+    # profile_baseline_100 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 100, True)
+    # profile_baseline_50 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 50, True)
+    # profile_baseline_25 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 25, True)
+    # profile_baseline_15 = log_data(LANDSCAPE_DATA_RAW_BASELINE_PATH, my_datetime, logger, 15, True)
 
     """ serialize baseline profiles """
-    serialize_profile(profile_baseline_15,'{}/baseline_15'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_25,'{}/baseline_25'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_50,'{}/baseline_50'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_100,'{}/baseline_100'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_150,'{}/baseline_150'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_200,'{}/baseline_200'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_450,'{}/baseline_450'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_900,'{}/baseline_900'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_baseline_1800,'{}/baseline_1800'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_15,'{}/baseline_15'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_25,'{}/baseline_25'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_50,'{}/baseline_50'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_100,'{}/baseline_100'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_150,'{}/baseline_150'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_200,'{}/baseline_200'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_450,'{}/baseline_450'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_900,'{}/baseline_900'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_baseline_1800,'{}/baseline_1800'.format(LANDSCAPE_BINS_PATH), logger)
 
     """ log camera profiles """
-    profile_camera_200 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 200, True)
-    profile_camera_150 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger,150,True)
-    profile_camera_100 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 100, True)
-    profile_camera_50 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 50, True)
-    profile_camera_25 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 25, True)
-    profile_camera_15 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 15, True)
+    # profile_camera_200 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 200, True)
+    # profile_camera_150 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger,150,True)
+    # profile_camera_100 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 100, True)
+    # profile_camera_50 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 50, True)
+    # profile_camera_25 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 25, True)
+    # profile_camera_15 = log_data(LANDSCAPE_DATA_RAW_CAMERA_PATH, my_datetime, logger, 15, True)
 
     """ serialize camera profiles """
-    serialize_profile(profile_camera_15, '{}/camera_15'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_camera_25, '{}/camera_25'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_camera_50, '{}/camera_50'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_camera_100, '{}/camera_100'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_camera_150, '{}/camera_150'.format(LANDSCAPE_BINS_PATH), logger)
-    serialize_profile(profile_camera_200, '{}/camera_200'.format(LANDSCAPE_BINS_PATH), logger)
-
+    # serialize_profile(profile_camera_15, '{}/camera_15'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_camera_25, '{}/camera_25'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_camera_50, '{}/camera_50'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_camera_100, '{}/camera_100'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_camera_150, '{}/camera_150'.format(LANDSCAPE_BINS_PATH), logger)
+    # serialize_profile(profile_camera_200, '{}/camera_200'.format(LANDSCAPE_BINS_PATH), logger)
+# 
     """ load baseline profiles from bin """
-    baseline_1800 = deserialize_profile('{}/baseline_1800.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_900 = deserialize_profile('{}/baseline_900.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_450 = deserialize_profile('{}/baseline_450.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_1800 = deserialize_profile('{}/baseline_1800.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_900 = deserialize_profile('{}/baseline_900.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_450 = deserialize_profile('{}/baseline_450.bin'.format(LANDSCAPE_BINS_PATH), logger)
     baseline_200 = deserialize_profile('{}/baseline_200.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_150 = deserialize_profile('{}/baseline_150.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_100 = deserialize_profile('{}/baseline_100.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_50 = deserialize_profile('{}/baseline_50.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_25 = deserialize_profile('{}/baseline_25.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    baseline_15 = deserialize_profile('{}/baseline_15.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_150 = deserialize_profile('{}/baseline_150.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_100 = deserialize_profile('{}/baseline_100.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_50 = deserialize_profile('{}/baseline_50.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_25 = deserialize_profile('{}/baseline_25.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # baseline_15 = deserialize_profile('{}/baseline_15.bin'.format(LANDSCAPE_BINS_PATH), logger)
     
     """ load camera  profiles from bin """
-    camera_200 = deserialize_profile('{}/camera_200.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    camera_150 = deserialize_profile('{}/camera_150.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    camera_100 = deserialize_profile('{}/camera_100.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    camera_50 = deserialize_profile('{}/camera_50.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    camera_25 = deserialize_profile('{}/camera_25.bin'.format(LANDSCAPE_BINS_PATH), logger)
-    camera_15 = deserialize_profile('{}/camera_15.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # camera_200 = deserialize_profile('{}/camera_200.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # camera_150 = deserialize_profile('{}/camera_150.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # camera_100 = deserialize_profile('{}/camera_100.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # camera_50 = deserialize_profile('{}/camera_50.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # camera_25 = deserialize_profile('{}/camera_25.bin'.format(LANDSCAPE_BINS_PATH), logger)
+    # camera_15 = deserialize_profile('{}/camera_15.bin'.format(LANDSCAPE_BINS_PATH), logger)
 
 
 
 
     """ create comparisons camera v baseline 1800 """
-    create_profile_compare_summary_json(camera_15, baseline_1800, '{}/camera_15_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_25, baseline_1800, '{}/camera_25_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_50, baseline_1800, '{}/camera_50_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_100, baseline_1800, '{}/camera_100_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_150, baseline_1800, '{}/camera_150_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_200, baseline_1800, '{}/camera_200_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_15, baseline_1800, '{}/camera_15_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_25, baseline_1800, '{}/camera_25_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_50, baseline_1800, '{}/camera_50_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_100, baseline_1800, '{}/camera_100_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_150, baseline_1800, '{}/camera_150_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_200, baseline_1800, '{}/camera_200_v_baseline_1800'.format(LANDSCAPE_JSON_COMP_PATH), logger)
 
     """ create comparisons camera v baseline 900 """
-    create_profile_compare_summary_json(camera_15, baseline_900, '{}/camera_15_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_25, baseline_900, '{}/camera_25_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_50, baseline_900, '{}/camera_50_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_100, baseline_900, '{}/camera_100_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_150, baseline_900, '{}/camera_150_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_200, baseline_900, '{}/camera_200_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_15, baseline_900, '{}/camera_15_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_25, baseline_900, '{}/camera_25_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_50, baseline_900, '{}/camera_50_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_100, baseline_900, '{}/camera_100_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_150, baseline_900, '{}/camera_150_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_200, baseline_900, '{}/camera_200_v_baseline_900'.format(LANDSCAPE_JSON_COMP_PATH), logger)
 
     """ create comparisons camera v baseline 450 """
-    create_profile_compare_summary_json(camera_15,  baseline_450, '{}/camera_15_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_25,  baseline_450, '{}/camera_25_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_50,  baseline_450, '{}/camera_50_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_150, baseline_450, '{}/camera_150_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_100, baseline_450, '{}/camera_100_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
-    create_profile_compare_summary_json(camera_200, baseline_450, '{}/camera_200_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_15,  baseline_450, '{}/camera_15_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_25,  baseline_450, '{}/camera_25_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_50,  baseline_450, '{}/camera_50_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_150, baseline_450, '{}/camera_150_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_100, baseline_450, '{}/camera_100_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # create_profile_compare_summary_json(camera_200, baseline_450, '{}/camera_200_v_baseline_450'.format(LANDSCAPE_JSON_COMP_PATH), logger)
 
 
     """ camera vs baseline 1800 """
-    df_camera_15_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_15_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_25_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_25_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_50_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_50_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_100_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_100_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_150_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_150_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_200_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_200_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_15_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_15_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_25_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_25_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_50_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_50_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_100_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_100_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_150_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_150_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_200_v_baseline_1800 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_200_v_baseline_1800.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
 
     """ camera vs baseline 900 """
-    df_camera_15_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_15_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_25_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_25_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_50_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_50_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_100_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_100_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_150_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_150_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_200_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_200_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_15_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_15_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_25_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_25_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_50_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_50_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_100_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_100_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_150_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_150_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_200_v_baseline_900 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_200_v_baseline_900.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
 
     """ camera vs baseline 450 """
-    df_camera_15_v_baseline_450 =  create_drift_metric_df_from_comp_summary_json(path='{}/camera_15_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_25_v_baseline_450 =  create_drift_metric_df_from_comp_summary_json(path='{}/camera_25_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_50_v_baseline_450 =  create_drift_metric_df_from_comp_summary_json(path='{}/camera_50_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_100_v_baseline_450 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_100_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_150_v_baseline_450 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_150_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
-    df_camera_200_v_baseline_450 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_200_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_15_v_baseline_450 =  create_drift_metric_df_from_comp_summary_json(path='{}/camera_15_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_25_v_baseline_450 =  create_drift_metric_df_from_comp_summary_json(path='{}/camera_25_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_50_v_baseline_450 =  create_drift_metric_df_from_comp_summary_json(path='{}/camera_50_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_100_v_baseline_450 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_100_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_150_v_baseline_450 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_150_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    # df_camera_200_v_baseline_450 = create_drift_metric_df_from_comp_summary_json(path='{}/camera_200_v_baseline_450.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+
+    LANDSCAPE_DATA_TENSOR_LANDSCAPE_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/tensor_landscape/'
+    LANDSCAPE_DATA_BLURRED_TENSOR_LANDSCAPE_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/blurred_tensor_landscape/'
+
+    """ tensor ls vs tensor blurred ls  """
+
+    # log tensor landscape
+    # profile_tensor_landscape_200 = log_data(LANDSCAPE_DATA_TENSOR_LANDSCAPE_PATH, my_datetime, logger, 200, True)
+    # serialize_profile(profile_tensor_landscape_200,'{}/profile_tensor_landscape_200'.format(LANDSCAPE_BINS_PATH),logger)
+    # log blurred tensor landscape
+    # profile_blurred_tensor_landscape_200 = log_data(LANDSCAPE_DATA_BLURRED_TENSOR_LANDSCAPE_PATH, my_datetime, logger, 200, True)
+    # serialize_profile(profile_blurred_tensor_landscape_200,'{}/profile_blurred_tensor_landscape_200'.format(LANDSCAPE_BINS_PATH),logger)
+    profile_tensor_landscape_200 = deserialize_profile('{}/profile_tensor_landscape_200.bin'.format(LANDSCAPE_BINS_PATH),logger)
+    profile_blurred_tensor_landscape_200 = deserialize_profile('{}/profile_blurred_tensor_landscape_200.bin'.format(LANDSCAPE_BINS_PATH),logger)
+    # create comparison tensor landscape vs tensor blurred landscape
+    # create_profile_compare_summary_json(profile_blurred_tensor_landscape_200, profile_tensor_landscape_200, '{}/tensor_ls_blurred_v_tensor_ls'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    
+    # tensor ls vs blurred tensor ls
+    df_tensor_ls_blurred_v_tensor_ls = create_drift_metric_df_from_comp_summary_json(path='{}/tensor_ls_blurred_v_tensor_ls.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    print(f"{'tensor landscape blurred vs tensor landscape':.^60}")
+    print(df_tensor_ls_blurred_v_tensor_ls)
+    
+
+    """ tensor ls 200 vs baseline ls 200 """
+    # create comparison tensor landscape (200) vs baseline
+    create_profile_compare_summary_json(profile_tensor_landscape_200, baseline_200, '{}/tensor_ls_v_baseline_200'.format(LANDSCAPE_JSON_COMP_PATH), logger)
+    # tensor ls vs baseline ls 200
+    df_tensor_ls_v_baseline_200 = create_drift_metric_df_from_comp_summary_json(path='{}/tensor_ls_v_baseline_200.json'.format(LANDSCAPE_JSON_COMP_PATH), logger=logger)
+    print(f"{'tensor landscape vs baseline 200':.^60}")
+    print(df_tensor_ls_v_baseline_200)
 
 
 
