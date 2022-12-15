@@ -82,7 +82,9 @@ class whylogs_logger():
     """ serialize a profile to a .bin """
     def serialize_profile(self,profile: DatasetProfileView, binary_name: str, data_directory_path:str) -> str:
         try:
-            return profile.write('{}{}/{}.bin'.format(data_directory_path,self.OUTPUT_BIN,binary_name))
+            serialize_profile_bin_path = '{}{}/{}.bin'.format(data_directory_path,self.OUTPUT_BIN,binary_name)
+            profile.write(serialize_profile_bin_path)
+            return serialize_profile_bin_path
         except Exception as e:
             self.logger.exception('Exception in serialize_profile(): {}'.format(e))
 
@@ -98,9 +100,11 @@ class whylogs_logger():
     """ create profile summary json"""
     def create_profile_summary_json(self,profile: DatasetProfileView, data_directory_path: str, summary_name : str) -> str:
         try:
-            with open('{}{}/{}.json'.format(data_directory_path,self.PROFILE_SUMMARIES,summary_name), 'w') as output_file:
+            profile_summary_json_path = '{}{}/{}.json'.format(data_directory_path,self.PROFILE_SUMMARIES,summary_name)
+            with open(profile_summary_json_path, 'w') as output_file:
                 output_file.write(str(generate_profile_summary(target_view=uncompound._uncompound_dataset_profile(profile), config=None)['profile_from_whylogs']))
             self.logger.info('Created profile summary json for {}'.format(summary_name))
+            return profile_summary_json_path
         except Exception as e:
             self.logger.exception('Exception in create_profile_summary(): {}'.format(e))
 
@@ -108,10 +112,12 @@ class whylogs_logger():
     """ create profile comparison json """
     def create_profile_compare_summary_json(self,target_profile: DatasetProfileView, ref_profile: DatasetProfileView, data_directory_path: str, compare_summary_name: str) -> str:
         try:
-            with open('{}{}/{}.json'.format(data_directory_path,self.PROFILE_COMPARE,compare_summary_name), 'w') as output_file:
+            compare_summary_json_path = '{}{}/{}.json'.format(data_directory_path,self.PROFILE_COMPARE,compare_summary_name)
+            with open(compare_summary_json_path, 'w') as output_file:
                 target_uncompound = uncompound._uncompound_dataset_profile(target_profile)
                 ref_uncompound = uncompound._uncompound_dataset_profile(ref_profile)
                 output_file.write(str(generate_summaries(target_view=target_uncompound,ref_view=ref_uncompound, config=None)['reference_profile_from_whylogs']))
+            return compare_summary_json_path
         except Exception as e:
             self.logger.exception('Exception in create_profile_compare_summary_json(): {}'.format(e))
 
