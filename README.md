@@ -8,3 +8,4 @@
 ### Inpired by:
 - Failing Loudly: An Empirical Study of Methods for Detecting Dataset Shift (https://arxiv.org/pdf/1810.11953.pdf)
 - WILDS: A Benchmark of in-the-Wild Distribution Shifts (https://wilds.stanford.edu/)
+- many more
