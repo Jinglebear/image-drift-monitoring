@@ -3,7 +3,6 @@ landscape_baseline/*
 landscape_images/*
 landscape_data*
 *.bin
-*.ipynb
 *.html
 *.json
 requirementsConda.txt
