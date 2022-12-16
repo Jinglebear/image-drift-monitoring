@@ -5,16 +5,16 @@ import os
 pd.set_option("display.precision", 20)
 pd.set_option('max_colwidth', 800)
 
-PROFILE_COMP_CSV_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/profile_comps/' 
-
+# PROFILE_COMP_CSV_PATH = '/home/jinglewsl/evoila/sandbox/whylogs_v1/image-drift/output/landscape/profile_comps/' 
+LANDSCAPE_COMP_CSV_PATH = '/home/jingle/evoila/ml-image-drift-monitoring/landscape_v_camera/whylogs_output/profile_compare/'
 
 def read_csv(baseline_batch_size: int):
-    df_15 = [pd.read_csv('{}camera_15_v_baseline_{}.csv'.format(PROFILE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'15'})]
-    df_25 = [pd.read_csv('{}camera_25_v_baseline_{}.csv'.format(PROFILE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'25'})]
-    df_50 = [pd.read_csv('{}camera_50_v_baseline_{}.csv'.format(PROFILE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'50'})]
-    df_100 = [pd.read_csv('{}camera_100_v_baseline_{}.csv'.format(PROFILE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'100'})]
-    df_150 = [pd.read_csv('{}camera_150_v_baseline_{}.csv'.format(PROFILE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'150'})]
-    df_200 = [pd.read_csv('{}camera_200_v_baseline_{}.csv'.format(PROFILE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'200'})]
+    df_15 =  [pd.read_csv('{}camera_15_v_baseline_{}.csv'.format(LANDSCAPE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'15'})]
+    df_25 =  [pd.read_csv('{}camera_25_v_baseline_{}.csv'.format(LANDSCAPE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'25'})]
+    df_50 =  [pd.read_csv('{}camera_50_v_baseline_{}.csv'.format(LANDSCAPE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'50'})]
+    df_100 = [pd.read_csv('{}camera_100_v_baseline_{}.csv'.format(LANDSCAPE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'100'})]
+    df_150 = [pd.read_csv('{}camera_150_v_baseline_{}.csv'.format(LANDSCAPE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'150'})]
+    df_200 = [pd.read_csv('{}camera_200_v_baseline_{}.csv'.format(LANDSCAPE_COMP_CSV_PATH,baseline_batch_size)).drop("Unnamed: 0",axis=1).drop('rating',axis=1).rename(columns={'p_val':'200'})]
     dfs = df_15 + df_25 + df_50 + df_100 + df_150 + df_200
     return dfs
 
