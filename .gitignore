@@ -9,3 +9,9 @@ requirementsConda.txt
 *.csv
 *.png
 __pycache__/
+*.tar
+data/
+landscape_v_camera/
+ants_vs_bees/
+camelyon17_v1.0
+image_data/
