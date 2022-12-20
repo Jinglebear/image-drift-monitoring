@@ -3,11 +3,12 @@ import json
 import logging
 import os
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional,List
 import pytz
 import random
 import pandas as pd
 from PIL import Image
+from PIL.Image import Image as PIL_IMAGE
 from progressbar import progressbar
 import pathlib
 
@@ -54,7 +55,7 @@ class whylogs_logger():
         pathlib.Path(path + self.PROFILE_COMPARE).mkdir(parents=True,exist_ok=True)
 
 
-    """ log data from directory to a profile, set logging date """
+    """ log basic images from directory to a profile, set logging date """
     def log_data(self, data_directory_path: str,sub_dir_path: str, batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
         try:
             self.create_output_dir(data_directory_path) # create output dirs 
@@ -77,7 +78,28 @@ class whylogs_logger():
             return profile
         except Exception as e:
             self.logger.exception('Exception in log_data(): {}'.format(e))
+    
 
+    def log_pil_data(self,data_directory_path:str,pil_data_arr: List[PIL_IMAGE],batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
+        try:
+            self.create_output_dir(data_directory_path) # create output dirs 
+            self.logger.info('Started logging PIL image data from array')
+            profile = None
+            if shuffle and batch_size > 0:
+                random.shuffle(pil_data_arr)  # shuffle images
+                pil_data_arr = pil_data_arr[0:batch_size]
+            for img in progressbar(pil_data_arr):
+                _ = log_image(img).profile()  # generate profile
+                _.set_dataset_timestamp(self.my_datetime) # optionally set dataset_timestamp
+                _view = _.view()  # extract mergeable profile view
+                if profile is None:
+                    profile = _view
+                else:
+                    profile = profile.merge(_view) # merge each profile while looping
+            self.logger.info('Logged image data from PIL image data with batch size {}'.format(profile.to_pandas()['image/Brightness.mean:counts/n']['image'])) #  get batchsize from output data
+            return profile
+        except Exception as e:
+            self.logger.exception('Exception in log_data(): {}'.format(e))
 
     """ serialize a profile to a .bin """
     def serialize_profile(self,profile: DatasetProfileView, binary_name: str, data_directory_path:str) -> str:
