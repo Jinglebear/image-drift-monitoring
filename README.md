@@ -1,4 +1,4 @@
-# image-drift
+# image-drift-monitoring
 ## Measuring Data Drift of Image Data for CV Models
 ### Utilizing:
 - whylogs (https://github.com/whylabs/whylogs)
