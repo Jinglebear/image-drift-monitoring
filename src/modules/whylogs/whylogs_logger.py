@@ -56,7 +56,7 @@ class whylogs_logger():
 
 
     """ log basic images from directory to a profile, set logging date """
-    def log_data(self, data_directory_path: str,sub_dir_path: str, batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
+    def log_basic_image_data_from_dir(self, data_directory_path: str,sub_dir_path: str, batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
         try:
             self.create_output_dir(data_directory_path) # create output dirs 
             self.logger.info('Started logging image data from: {}'.format(sub_dir_path))
@@ -79,8 +79,8 @@ class whylogs_logger():
         except Exception as e:
             self.logger.exception('Exception in log_data(): {}'.format(e))
     
-
-    def log_pil_data(self,data_directory_path:str,pil_data_arr: List[PIL_IMAGE],batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
+    """ log pil images from a list to a profile, set logging date """
+    def log_pil_images_data_from_list(self,data_directory_path:str,pil_data_arr: List[PIL_IMAGE],batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
         try:
             self.create_output_dir(data_directory_path) # create output dirs 
             self.logger.info('Started logging PIL image data from array')
