@@ -17,12 +17,12 @@ def main():
 
     
     """ WILDS CAMELYON DATASET """
-    dataset = get_dataset(dataset="camelyon17", download=False)
+    # dataset = get_dataset(dataset="camelyon17", download=True)
 
     """ GET DATASETS """
     # Get the training set (in distribution)
 
-    train_data = dataset.get_subset("train")
+    # train_data = dataset.get_subset("train")
 
 
     # Get the validation set (in distribution)
@@ -36,7 +36,7 @@ def main():
 
     """ LOG DATASETS TO PROFILES AND SERIALIZE TO BINARIES"""
 
-    pil_images_train = [ train_data.dataset[idx][0] for idx in progressbar(train_data.indices)]
+    # pil_images_train = [ train_data.dataset[idx][0] for idx in progressbar(train_data.indices)]
     # pil_images_val = [ val_data.dataset[idx][0] for idx in progressbar(val_data.indices)]
     # pil_images_test =  [ test_data.dataset[idx][0] for idx in progressbar(test_data.indices)]
 

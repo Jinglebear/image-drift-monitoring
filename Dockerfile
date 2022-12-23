@@ -2,17 +2,18 @@ FROM python:3.8
 
 # update
 RUN apt-get update
-
-# import code & data
+# create working directory
 RUN mkdir /app
 WORKDIR /app
 
+# import code
 ADD src /app/src
-ADD data /app/data
-
+# import data
+# COPY data.tar.gz /app/
 
 
 
 # install dependencies
 RUN pip install -r src/modules/whylogs/requirements_whylogs_torchdrift.txt
-CMD ["bash"]
+
+# docker run <image> /bin/bash -c "tar -xzf data.tar.gz;python src/modules/whylogs/main.py"
