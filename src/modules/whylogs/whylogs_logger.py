@@ -23,7 +23,7 @@ from whylogs.viz.utils.profile_viz_calculations import (
     frequent_items_from_view, generate_profile_summary, generate_summaries,
     histogram_from_view)
 
-class whylogs_logger():
+class Whylogs_Logger():
     def __init__(self, config = None) -> None:
         
         """ init output paths """
@@ -100,6 +100,27 @@ class whylogs_logger():
             return profile
         except Exception as e:
             self.logger.exception('Exception in log_data(): {}'.format(e))
+
+    def log_pil_image_to_profile(self,image : PIL_IMAGE, profile : DatasetProfileView) -> DatasetProfileView:
+        try:
+            _ = log_image(image).profile()
+            _.set_dataset_timestamp(self.my_datetime) # optionally set dataset_timestamp
+            _view = _.view()
+            if profile is None:
+                profile = _view
+            else:
+                profile = profile.merge(_view)
+            return profile
+        except Exception as e:
+            self.logger.exception('Exception in log_pil_image_to_profile: {}'.format(e))
+
+    def merge_profiles(self,profiles : List[DatasetProfileView]) -> DatasetProfileView:
+        first = profiles[0] 
+        for profile in profiles[1:]:
+            first = first.merge(profile)
+        return first
+
+
 
     """ serialize a profile to a .bin """
     def serialize_profile(self,profile: DatasetProfileView, binary_name: str, data_directory_path:str) -> str:
