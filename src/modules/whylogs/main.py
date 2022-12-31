@@ -15,6 +15,8 @@ def main():
     CAMELYON_ROOT_PATH = '{}/data'.format(os.getcwd())
     GLOBALWHEAT_ROOT_PATH = '{}/data/global_wheat_v1.1'.format(os.getcwd())
     IWILDCAM_ROOT_PATH = '{}/data/iwildcam_v2.0'.format(os.getcwd())
+    POVERTY_ROOT_PATH =  '{}/data/poverty_v1.1'.format(os.getcwd())
+
     CSV_PATH = '{}/data/whylogs_output/profile_compare/'.format(os.getcwd())
 
     
@@ -27,36 +29,59 @@ def main():
     """ WILDS GLOBALWHEAT DATASET """
     # dataset = get_dataset(dataset="globalwheat", download=False)
     """ WILDS IWILDCAM DATASET """
-    dataset = get_dataset(dataset="iwildcam", download=False)
+    # dataset = get_dataset(dataset="iwildcam", download=False)
     """ WILDS POVERTY DATASET """
-    # dataset = get_dataset(dataset="poverty",download=True)
+    dataset = get_dataset(dataset="poverty",download=False)
 
     """ GET SPLITS """
     # Get the training set (in distribution)
 
-    train_data = dataset.get_subset("train")
+    # train_data = dataset.get_subset("train")
 
     # Get the validation set (in distribution)
 
-    # val_data = dataset.get_subset("val")
+    val_data = dataset.get_subset("val")
 
     # Get the test set (out of distribution)
 
     # test_data = dataset.get_subset("test")
 
 
+    """ LOG TRAIN SPLIT TO BINARY USING MULTIPROCESSING"""
+    # for i in range(5,105,5):    
+    #     log_profile_to_bin_multiple_processes(
+    #         w_logger=w_logger,
+    #         percentage=i,
+    #         indices=train_data.indices,
+    #         dataset=train_data.dataset,
+    #         num_processes=6,
+    #         split='train',
+    #         dataset_name='poverty',
+    #         dataset_dir_path=POVERTY_ROOT_PATH)
 
-    """ LOG DATASET TO BINARY USING MULTIPROCESSING"""
-    log_profile_to_bin_multiple_processes(
-        w_logger=w_logger,
-        percentage=100,
-        indices=train_data.indices,
-        dataset=train_data.dataset,
-        num_processes=6,
-        split='train',
-        dataset_name='iwildcam',
-        dataset_dir_path=IWILDCAM_ROOT_PATH)
+    """ LOG VAL SPLIT TO BINARY USING MULTIPROCESSING"""
+    for j in range(5,105,5):    
+        log_profile_to_bin_multiple_processes(
+            w_logger=w_logger,
+            percentage=j,
+            indices=val_data.indices,
+            dataset=val_data.dataset,
+            num_processes=6,
+            split='val',
+            dataset_name='poverty',
+            dataset_dir_path=POVERTY_ROOT_PATH)
     
+    """ LOG TEST SPLIT TO BINARY USING MULTIPROCESSING"""
+    # for k in range(5,105,5):    
+    #     log_profile_to_bin_multiple_processes(
+    #         w_logger=w_logger,
+    #         percentage=k,
+    #         indices=test_data.indices,
+    #         dataset=test_data.dataset,
+    #         num_processes=6,
+    #         split='test',
+    #         dataset_name='poverty',
+    #         dataset_dir_path=POVERTY_ROOT_PATH)
 
     dt = timer() - t
     print(f'Time (s) {dt:.3f}')
