@@ -11,6 +11,12 @@ from whylogs_logger import Whylogs_Logger
 from wilds import get_dataset
 from whylogs.core.view.dataset_profile_view import DatasetProfileView
 
+import torchvision.transforms as T
+import torch
+import torchvision
+import PIL
+
+
 def main():
     CAMELYON_ROOT_PATH = '{}/data'.format(os.getcwd())
     GLOBALWHEAT_ROOT_PATH = '{}/data/global_wheat_v1.1'.format(os.getcwd())
@@ -25,27 +31,39 @@ def main():
     t = timer() # setup timer
     
     """ WILDS CAMELYON DATASET """
-    # dataset = get_dataset(dataset="camelyon17", download=True)
+    dataset = get_dataset(dataset="camelyon17", download=False)
     """ WILDS GLOBALWHEAT DATASET """
     # dataset = get_dataset(dataset="globalwheat", download=False)
     """ WILDS IWILDCAM DATASET """
     # dataset = get_dataset(dataset="iwildcam", download=False)
     """ WILDS POVERTY DATASET """
-    dataset = get_dataset(dataset="poverty",download=False)
+    # dataset = get_dataset(dataset="poverty",download=False)
+
+    
+
 
     """ GET SPLITS """
     # Get the training set (in distribution)
 
-    # train_data = dataset.get_subset("train")
+    train_data = dataset.get_subset("train")
 
     # Get the validation set (in distribution)
 
-    val_data = dataset.get_subset("val")
+    # val_data = dataset.get_subset("val")
 
     # Get the test set (out of distribution)
 
     # test_data = dataset.get_subset("test")
 
+    """ MY TESTING """
+   
+    
+    tensor =train_data.dataset[train_data.indices[0]][0]
+    
+    print(tensor)
+
+    
+    
 
     """ LOG TRAIN SPLIT TO BINARY USING MULTIPROCESSING"""
     # for i in range(5,105,5):    
@@ -60,16 +78,16 @@ def main():
     #         dataset_dir_path=POVERTY_ROOT_PATH)
 
     """ LOG VAL SPLIT TO BINARY USING MULTIPROCESSING"""
-    for j in range(5,105,5):    
-        log_profile_to_bin_multiple_processes(
-            w_logger=w_logger,
-            percentage=j,
-            indices=val_data.indices,
-            dataset=val_data.dataset,
-            num_processes=6,
-            split='val',
-            dataset_name='poverty',
-            dataset_dir_path=POVERTY_ROOT_PATH)
+    # for j in range(5,105,5):    
+    #     log_profile_to_bin_multiple_processes(
+    #         w_logger=w_logger,
+    #         percentage=j,
+    #         indices=val_data.indices,
+    #         dataset=val_data.dataset,
+    #         num_processes=6,
+    #         split='val',
+    #         dataset_name='poverty',
+    #         dataset_dir_path=POVERTY_ROOT_PATH)
     
     """ LOG TEST SPLIT TO BINARY USING MULTIPROCESSING"""
     # for k in range(5,105,5):    
