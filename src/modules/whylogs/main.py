@@ -31,7 +31,7 @@ def main():
     t = timer() # setup timer
     
     """ WILDS CAMELYON DATASET """
-    dataset = get_dataset(dataset="camelyon17", download=False)
+    # dataset = get_dataset(dataset="camelyon17", download=False)
     """ WILDS GLOBALWHEAT DATASET """
     # dataset = get_dataset(dataset="globalwheat", download=False)
     """ WILDS IWILDCAM DATASET """
@@ -45,7 +45,7 @@ def main():
     """ GET SPLITS """
     # Get the training set (in distribution)
 
-    train_data = dataset.get_subset("train")
+    # train_data = dataset.get_subset("train")
 
     # Get the validation set (in distribution)
 
@@ -58,9 +58,9 @@ def main():
     """ MY TESTING """
    
     
-    tensor =train_data.dataset[train_data.indices[0]][0]
+    # tensor =train_data.dataset[train_data.indices[0]][0]
     
-    print(tensor)
+    # print(tensor)
 
     
     
@@ -103,6 +103,15 @@ def main():
 
     dt = timer() - t
     print(f'Time (s) {dt:.3f}')
+
+    profile_1 = w_logger.deserialize_profile('/home/jinglewsl/evoila/projects/image-drift-monitoring/data','train_camelyon_profile_100')
+    # w_logger.create_profile_summary_json(profile=profile_1,data_directory_path='/home/jinglewsl/evoila/projects/image-drift-monitoring/data/',summary_name='train_camelyon_profile_100')
+    profile_2 = w_logger.deserialize_profile('/home/jinglewsl/evoila/projects/image-drift-monitoring/data/','test_camelyon_profile_100')
+    w_logger.create_profile_compare_summary_json(target_profile=profile_2,
+                                    ref_profile=profile_1,
+                                    data_directory_path='/home/jinglewsl/evoila/projects/image-drift-monitoring/data/',
+                                    compare_summary_name='test_camelyon_100_vs_train_camelyon_100')
+
 
 # logging split (x) from dataset (y) with percentage (z) to binary x_y_profile_z.bin
 def log_profile_to_bin_multiple_processes(w_logger : Whylogs_Logger, percentage: int, indices : List[int], dataset: any, num_processes: int, split: str, dataset_name: str, dataset_dir_path : str):
