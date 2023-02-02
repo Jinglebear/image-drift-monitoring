@@ -18,7 +18,7 @@ import PIL
 
 
 def main():
-    CAMELYON_ROOT_PATH = '{}/data'.format(os.getcwd())
+    CAMELYON_ROOT_PATH = '{}/data/camelyon17_v1.0'.format(os.getcwd())
     GLOBALWHEAT_ROOT_PATH = '{}/data/global_wheat_v1.1'.format(os.getcwd())
     IWILDCAM_ROOT_PATH = '{}/data/iwildcam_v2.0'.format(os.getcwd())
     POVERTY_ROOT_PATH =  '{}/data/poverty_v1.1'.format(os.getcwd())
