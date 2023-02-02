@@ -18,3 +18,5 @@ image_data/
 misc/
 data.tar.gz
 nohup.out
+*.npy
+*.npz
