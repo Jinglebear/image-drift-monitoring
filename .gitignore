@@ -20,5 +20,5 @@ data.tar.gz
 nohup.out
 *.npy
 *.npz
-*.h5
-*.toml
+# *.h5
+# *.toml

@@ -1,0 +1,26 @@
+name = "MMDDrift"
+backend = "tensorflow"
+x_ref = "x_ref.npy"
+input_shape = "None"
+data_type = "None"
+x_ref_preprocessed = true
+p_val = 0.05
+preprocess_at_init = true
+update_x_ref = "None"
+kernel = "None"
+sigma = "None"
+configure_kernel_from_x_ref = true
+n_permutations = 100
+device = "None"
+
+[meta]
+version = "0.10.4"
+config_spec = "0.1"
+version_warning = false
+
+[preprocess_fn]
+src = "@cd.tensorflow.preprocess.preprocess_drift"
+batch_size = 512
+
+[preprocess_fn.model]
+src = "preprocess_fn/model"
