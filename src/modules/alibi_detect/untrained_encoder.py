@@ -35,8 +35,9 @@ class UntrainedAutoencoder():
         self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(handler)
 
-        """ detector """
-        self.detector: KSDrift = None
+        """ detectors """
+        self.detectorKS: KSDrift = None
+        self.detectorMMD : MMDDrift = None
 
     # tensorflow encoder 
     def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
@@ -68,7 +69,7 @@ class UntrainedAutoencoder():
             nn.Flatten(),
             nn.Linear(in_features=input_shape[1]*64,out_features=encoding_dim)
         ).to(device=device).eval()
-        return partial(preprocess_drift,model=encoder_net,device=device,batch_size=batch_size)
+        return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
 
 
@@ -79,7 +80,7 @@ class UntrainedAutoencoder():
                 save_detector(detector,path)
             except Exception as e:
                 self.logger.info('Error in init_mmd_detector(): Error Saving Detector',e)
-        self.detector = detector
+        self.detectorMMD = detector
         self.logger.info('MMD Detector initialized')
 
     def init_ks_detector(self,reference_data: np.ndarray, encoder_fn : partial, p_val: float = 0.05, path : str = None, save_dec : bool = False):
@@ -90,24 +91,44 @@ class UntrainedAutoencoder():
                 save_detector(detector,path)
             except Exception as e:
                 self.logger.info('Error in init_ks_detector(): Error Saving Detector',e)
-        self.detector = detector
+        self.detectorKS = detector
         self.logger.info('KS Detector initialized')
 
-    def import_detector(self,path:str):
+    def import_detector(self,path:str, type: str):
         try:
-            self.detector = load_detector(path) #load drift detector
-            self.logger.info('Detector imported and initialized')
+            if type == 'KS':
+                self.detectorKS = load_detector(path) #load drift detector
+                self.logger.info('KS Detector imported')
+            elif type == 'MMD':
+                self.detectorMMD = load_detector(path)
+                self.logger.info('MMD Detector imported')
+            else:
+                raise ValueError('Invalid Detector Type')
         except Exception as e:
-                self.logger.exception('Error in import_detector(): Error Saving Detector',e)
+                self.logger.exception('Error in import_KS_detector(): Error Importing Detector',e)
                  
-    def make_prediction(self,target_data:np.ndarray) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
+
+    def make_prediction(self,target_data:np.ndarray, type :str) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
         labels = ['No!', 'Yes!']
-        if self.detector is None:
-            self.logger.exception('No Detector initialized')
+        if type == 'KS':
+            if self.detectorKS is None:
+                self.logger.exception('No Detector initialized')
+            else:
+                preds = self.detectorKS.predict(x=target_data) # predict wether a batch of data has drifted from reference data
+                print('Drift? {}'.format(labels[preds['data']['is_drift']]))
+                print('Feature-wise p-values:')
+                print(preds['data']['p_val'])
+                print('len:{}'.format(len(preds['data']['p_val'])))
+                return preds
+        elif type == 'MMD':
+            if self.detectorMMD is None:
+                self.logger.exception('No Detector initialized')
+            else:
+                preds = self.detectorMMD.predict(x=target_data) # predict wether a batch of data has drifted from reference data
+                print('Drift? {}'.format(labels[preds['data']['is_drift']]))
+                print('Feature-wise p-values:')
+                print(preds['data']['p_val'])
+                print('len:{}'.format(len(preds['data']['p_val'])))
+                return preds
         else:
-            preds = self.detector.predict(x=target_data) # predict wether a batch of data has drifted from reference data
-            print('Drift? {}'.format(labels[preds['data']['is_drift']]))
-            print('Feature-wise p-values:')
-            print(preds['data']['p_val'])
-            print('len:{}'.format(len(preds['data']['p_val'])))
-            return preds
+            raise ValueError('Invalid Detector Type')
