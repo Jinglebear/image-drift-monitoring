@@ -1,15 +1,17 @@
 # MISC imports
 import numpy as np
-from typing import Dict,Union
 import logging
+from typing import Dict, Tuple, Union
 from functools import partial
+# tensorflow imports
+import tensorflow as tf
+from keras.layers import Conv2D, Dense, Flatten, InputLayer
 # alibi-detect imports
-from alibi_detect.cd import KSDrift, MMDDrift, CVMDrift, LSDDDrift
+from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
 from alibi_detect.saving import save_detector, load_detector
-# sklearn imports
-from sklearn.decomposition import PCA
+from alibi_detect.cd.tensorflow import preprocess_drift
 
-class PrincipalComponentAnalysis():
+class TrainedAutoencoder():
     def __init__(self,config=None) -> None:
         """ init config """
         self.config = config
@@ -29,41 +31,41 @@ class PrincipalComponentAnalysis():
         self.dectectorLSDD : LSDDDrift = None
         self.detectorCVM : CVMDrift = None
 
-        """ pca model """
-        self.pca : PCA = None 
+    # tensorflow encoder 
+    def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
+        tf.random.set_seed(0) # random
+        # self.encoding_dim = encoding_dim # check later
+        encoder_net = tf.keras.Sequential(
+            [
+                InputLayer(input_shape=input_shape),
+                Conv2D(encoding_dim*2,4,strides=2,padding='same',activation=tf.nn.relu),
+                Conv2D(encoding_dim*4,4,strides=2,padding='same',activation=tf.nn.relu),
+                Conv2D(encoding_dim*16,4,strides=2,padding='same',activation=tf.nn.relu),
+                Flatten(),
+                Dense(encoding_dim)
+            ]
+        )
+        return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
-    # pca init 
-    def init_pca(self,x_ref: np.ndarray,) -> PCA:
-        # try:
-        shape = x_ref.shape
-        x_ref = np.reshape(x_ref,(shape[0],int(shape[1]*shape[2]*shape[3]))) 
-        print(x_ref.shape)
-        self.pca = PCA(int(self.config['PCA_N_COMPONENTS']))
-        self.pca.fit(x_ref) # fitting x_ref to pca 
-        self.logger.info('init_pca(): fitted x_ref to pca')
-        # except Exception as e:
-        #     self.logger.exception('Error in init pca()',e)
-        return self.pca
-
+    
+    
     # init various types of detectors
-    def init_detector(self,detector_type:str, reference_data:np.ndarray,detector_name:str =None, save_dec:bool = False):
+    def init_detector(self,detector_type:str, reference_data:np.ndarray, encoder_fn:partial, detector_name:str =None, save_dec:bool = False):
         try:
-            shape = reference_data.shape
-            reference_data = np.reshape(reference_data,(shape[0],int(shape[1]*shape[2]*shape[3])))
-            if detector_type == 'KS' and self.pca is not None:
-                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+            if detector_type == 'KS':
+                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
                 self.detectorKS = detector
-            elif detector_type == 'MMD' and self.pca is not None:
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+            elif detector_type == 'MMD':
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
                 self.detectorMMD = detector
-            elif detector_type == 'CVM' and self.pca is not None:
-                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+            elif detector_type == 'CVM':
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
                 self.detectorCVM = detector
-            elif detector_type == 'LSDD' and self.pca is not None:
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+            elif detector_type == 'LSDD':
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
                 self.dectectorLSDD = detector
             else:
-                raise ValueError('Invalid Detector Type / PCA not initialized')
+                raise ValueError('Invalid Detector Type')
             self.logger.info('{} Detector initialized'.format(detector_type))
             if(save_dec and detector_name):
                 try:
@@ -96,8 +98,6 @@ class PrincipalComponentAnalysis():
                  
     # make prediction
     def make_prediction(self,target_data:np.ndarray, detector_type :str) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
-        shape = target_data.shape
-        target_data = np.reshape(target_data,(shape[0],int(shape[1]*shape[2]*shape[3])))
         labels = ['No!', 'Yes!']
         if detector_type == 'KS' and self.detectorKS is not None:
             preds = self.detectorKS.predict(x=target_data) 
@@ -117,3 +117,20 @@ class PrincipalComponentAnalysis():
         print('len:{}'.format(len(preds['data']['p_val']))) 
             
         return preds
+
+    # TODO: install required package / delete this 
+    # pytorch encoder expects images in (channels, height, width) format
+    # def init_default_pt_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
+    #     torch.manual_seed(0)
+    #     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    #     encoder_net = nn.Sequential(
+    #         nn.Conv2d(in_channels=input_shape[0],out_channels=input_shape[1]*2,kernel_size=4,stride=2,padding=0),
+    #         nn.ReLU(),
+    #         nn.Conv2d(in_channels=input_shape[1]*2,out_channels=input_shape[1]*4,kernel_size=4,stride=2,padding=0),
+    #         nn.ReLU(),
+    #         nn.Conv2d(in_channels=input_shape[1]*4,out_channels=input_shape[1]*16,kernel_size=4,stride=2,padding=0),
+    #         nn.ReLU(),
+    #         nn.Flatten(),
+    #         nn.Linear(in_features=input_shape[1]*64,out_features=encoding_dim)
+    #     ).to(device=device).eval()
+    #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
