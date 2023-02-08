@@ -4,7 +4,7 @@ landscape_images/*
 landscape_data*
 *.bin
 *.html
-*.json
+# *.json
 requirementsConda.txt
 *.csv
 *.png
