@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 import logging
-from alibi_detect.cd import KSDrift, MMDDrift
+from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
 from alibi_detect.models.tensorflow import scale_by_instance
 from alibi_detect.utils.fetching import fetch_tf_model, fetch_detector
 from alibi_detect.saving import save_detector, load_detector
@@ -38,6 +38,8 @@ class UntrainedAutoencoder():
         """ detectors """
         self.detectorKS: KSDrift = None
         self.detectorMMD : MMDDrift = None
+        self.dectectorLSDD : LSDDDrift = None
+        self.detectorCVM : CVMDrift = None
 
     # tensorflow encoder 
     def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
@@ -55,6 +57,7 @@ class UntrainedAutoencoder():
         )
         return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
     
+    # TODO: install required package / delete this 
     # pytorch encoder expects images in (channels, height, width) format
     def init_default_pt_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
         torch.manual_seed(0)
@@ -71,46 +74,56 @@ class UntrainedAutoencoder():
         ).to(device=device).eval()
         return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
-
-
-    def init_mmd_detector(self,reference_data: np.ndarray, encoder_fn : partial, n_permutations : int, p_val: float =0.05, path: str =None, save_dec : bool = False, backend : str = 'tensorflow'):
-        detector = MMDDrift(x_ref=reference_data,backend=backend,p_val=p_val,preprocess_fn=encoder_fn,n_permutations=n_permutations)
-        if(save_dec and path):
-            try:
-                save_detector(detector,path)
-            except Exception as e:
-                self.logger.info('Error in init_mmd_detector(): Error Saving Detector',e)
-        self.detectorMMD = detector
-        self.logger.info('MMD Detector initialized')
-
-    def init_ks_detector(self,reference_data: np.ndarray, encoder_fn : partial, p_val: float = 0.05, path : str = None, save_dec : bool = False):
-        detector = KSDrift(reference_data,p_val=p_val,preprocess_fn=encoder_fn)
-        # assert detector.p_val / detector.n_features == p_val / self.encoding_dim #check later
-        if(save_dec and path):
-            try:
-                save_detector(detector,path)
-            except Exception as e:
-                self.logger.info('Error in init_ks_detector(): Error Saving Detector',e)
-        self.detectorKS = detector
-        self.logger.info('KS Detector initialized')
-
-    def import_detector(self,path:str, type: str):
+    def init_detector(self,detector_type:str, reference_data:np.ndarray, encoder_fn:partial, detector_name:str =None, save_dec:bool = False):
         try:
-            if type == 'KS':
+            if detector_type == 'KS':
+                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                self.detectorKS = detector
+            elif detector_type == 'MMD':
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                self.detectorMMD = detector
+            elif detector_type == 'CVM':
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                self.detectorCVM = detector
+            elif detector_type == 'LSDD':
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                self.dectectorLSDD = detector
+            else:
+                raise ValueError('Invalid Detector Type')
+            self.logger.info('{} Detector initialized'.format(detector_type))
+            if(save_dec and detector_name):
+                try:
+                    save_detector(detector,"{}/{}".format(self.config['DETECTOR_DIR_PATH'],detector_name))
+                except Exception as e:
+                    self.logger.info('Error in init_detector({}:{}): Error Saving Detector'.format(detector_type,detector_name),e)
+        except Exception as e:
+                self.logger.exception('Error in init_detector({}): Error Initializing Detector'.format(detector_type),e)
+
+
+    # import detector
+    def import_detector(self,path:str, detector_type: str):
+        try:
+            if detector_type == 'KS':
                 self.detectorKS = load_detector(path) #load drift detector
                 self.logger.info('KS Detector imported')
-            elif type == 'MMD':
+            elif detector_type == 'MMD':
                 self.detectorMMD = load_detector(path)
                 self.logger.info('MMD Detector imported')
+            elif detector_type == 'CVM':
+                self.detectorCVM = load_detector(path)
+                self.logger.info('CVM Detector imported')
+            elif detector_type == 'LSDD':
+                self.dectectorLSDD = load_detector(path)
+                self.logger.info('LSDD Detector imported')
             else:
                 raise ValueError('Invalid Detector Type')
         except Exception as e:
                 self.logger.exception('Error in import_KS_detector(): Error Importing Detector',e)
                  
-
-    def make_prediction(self,target_data:np.ndarray, type :str) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
+    # make prediction
+    def make_prediction(self,target_data:np.ndarray, detector_type :str) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
         labels = ['No!', 'Yes!']
-        if type == 'KS':
+        if detector_type == 'KS':
             if self.detectorKS is None:
                 self.logger.exception('No Detector initialized')
             else:
@@ -120,11 +133,21 @@ class UntrainedAutoencoder():
                 print(preds['data']['p_val'])
                 print('len:{}'.format(len(preds['data']['p_val'])))
                 return preds
-        elif type == 'MMD':
+        elif detector_type == 'MMD':
             if self.detectorMMD is None:
                 self.logger.exception('No Detector initialized')
             else:
                 preds = self.detectorMMD.predict(x=target_data) # predict wether a batch of data has drifted from reference data
+                print('Drift? {}'.format(labels[preds['data']['is_drift']]))
+                print('Feature-wise p-values:')
+                print(preds['data']['p_val'])
+                print('len:{}'.format(len(preds['data']['p_val'])))
+                return preds
+        elif detector_type == 'CVM':
+            if self.detectorCVM is None:
+                self.logger.exception('No Detector initialized')
+            else:
+                preds = self.detectorCVM.predict(x=target_data) # predict wether a batch of data has drifted from reference data
                 print('Drift? {}'.format(labels[preds['data']['is_drift']]))
                 print('Feature-wise p-values:')
                 print(preds['data']['p_val'])

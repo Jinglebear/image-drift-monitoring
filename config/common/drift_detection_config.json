@@ -1,5 +1,9 @@
 {
     "VERSION" : 0.1,
-    "DATA_DIRECTORY_PATH" : "/home/ubuntu/image-drift-monitoring/data"
+    "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
+    "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors",
+    "AVAILABLE_DETECTOR_TYPES" : ["KS", "CVM", "MMD", "LSDD"],
+    "P_VAL" : 0.05,
+    "WINDOW_SIZE" : 200
      
 }

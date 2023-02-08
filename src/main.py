@@ -17,7 +17,7 @@ def main():
     print(my_whylogs_logger.config['VERSION'])
     
 
-   
+    
 
 
     
