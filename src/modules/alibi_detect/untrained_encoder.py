@@ -1,24 +1,14 @@
-# alibi
-import matplotlib.pyplot as plt
+# MISC imports
 import numpy as np
-import os
-import tensorflow as tf
 import logging
-from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
-from alibi_detect.models.tensorflow import scale_by_instance
-from alibi_detect.utils.fetching import fetch_tf_model, fetch_detector
-from alibi_detect.saving import save_detector, load_detector
-
-
-import torch
-import torch.nn as nn
-
-
 from typing import Dict, Tuple, Union
-
 from functools import partial
-from tensorflow import keras
-from keras.layers import Conv2D, Dense, Flatten, InputLayer, Reshape
+# tensorflow imports
+import tensorflow as tf
+from keras.layers import Conv2D, Dense, Flatten, InputLayer
+# alibi-detect imports
+from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
+from alibi_detect.saving import save_detector, load_detector
 from alibi_detect.cd.tensorflow import preprocess_drift
 
 class UntrainedAutoencoder():
