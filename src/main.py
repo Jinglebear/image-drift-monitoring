@@ -1,4 +1,5 @@
-
+# whylogs import
+from modules.whylogs.whylogs_logger import Whylogs_Logger
 
 # MISC imports
 import json
@@ -6,13 +7,14 @@ import json
 
 def main():
     
-   
-
     # Load Configuration
-    with open('config/drift_detection_config.json') as config_file:
+    with open('config/common/drift_detection_config.json') as config_file:
         drift_detection_config = json.load(config_file)
     
-    print(drift_detection_config['VERSION'])
+
+    # init whylogs logger
+    my_whylogs_logger = Whylogs_Logger(drift_detection_config)
+    print(my_whylogs_logger.config['VERSION'])
     
 
    
