@@ -5,11 +5,16 @@ from typing import Dict, Tuple, Union
 from functools import partial
 # tensorflow imports
 import tensorflow as tf
-from keras.layers import Conv2D, Dense, Flatten, InputLayer
+from keras.layers import Conv2D, Dense, Flatten, InputLayer, Conv2DTranspose, Reshape
+# pytorch imports 
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
 # alibi-detect imports
 from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
 from alibi_detect.saving import save_detector, load_detector
 from alibi_detect.cd.tensorflow import preprocess_drift
+from alibi_detect.models.pytorch import trainer
 
 class TrainedAutoencoder():
     def __init__(self,config=None) -> None:
@@ -31,8 +36,12 @@ class TrainedAutoencoder():
         self.dectectorLSDD : LSDDDrift = None
         self.detectorCVM : CVMDrift = None
 
+        """ Autoencoder """
+        self.encoder = None
+        self.decoder = None
+
     # tensorflow encoder 
-    def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
+    def init_default_tf_autoencoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
         tf.random.set_seed(0) # random
         # self.encoding_dim = encoding_dim # check later
         encoder_net = tf.keras.Sequential(
@@ -45,10 +54,59 @@ class TrainedAutoencoder():
                 Dense(encoding_dim)
             ]
         )
+        decoder_net = tf.keras.Sequential(
+            [
+                InputLayer(input_shape=input_shape),
+                Dense(encoding_dim),
+                Reshape(),
+                Conv2DTranspose(filters=encoding_dim*16,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
+                Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
+                Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
+            ]
+        )
         return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
-    
-    
+    def init_default_pt_autoencoder(self,dl : DataLoader):
+        ENC_DIM = 32
+        BATCH_SIZE = 32
+        EPOCHS =5
+        LEARNING_RATE = 1e-3
+
+        self.encoder = nn.Sequential(
+            nn.Conv2d(3,8,5,stride=3,padding=1), # (batch, 8, 32, 32)
+            nn.ReLU(),
+            nn.Conv2d(8,12,4,stride=2,padding=1), # (batch,12,16,16)
+            nn.ReLU(),
+            nn.Conv2d(12,16,4,stride=2,padding=1), # (batch,16,8,8)
+            nn.ReLU(),
+            nn.Conv2d(16,20,4,stride=2,padding=1), # (batch,20,4,4)
+            nn.ReLU(),
+            nn.Conv2d(20,ENC_DIM,4,stride=1,padding=0), #(batch,enc_dim,1,1)
+            nn.Flatten(),   
+        )
+        self.decoder = nn.Sequential(
+            nn.Unflatten(1,(ENC_DIM,1,1)),
+            nn.ConvTranspose2d(ENC_DIM,20,4,stride=1,padding=0), # [batch,20,4,4]
+            nn.ReLU(),
+            nn.ConvTranspose2d(20,16,4,stride=2,padding=1), # (batch,16,8,8)
+            nn.ReLU(),
+            nn.ConvTranspose2d(16,12,4,stride=2,padding=1), # (batch,12,16,16)
+            nn.ReLU(),
+            nn.ConvTranspose2d(12,8,4,stride=2,padding=1),  # (batch,8,32,32)
+            nn.ReLU(),
+            nn.ConvTranspose2d(8,3,5,stride=3,padding=1),  # (batch,3,96,96)
+            nn.Sigmoid()
+        )
+        device = torch.device('cpu')
+        ae = nn.Sequential(self.encoder,self.decoder).to(device)
+        trainer(ae,nn.MSELoss(),dl,device,learning_rate=LEARNING_RATE,epochs=EPOCHS)
+
+    def encoder_fn(self,x: np.ndarray) -> np.array:
+        x = torch.as_tensor(x).to(device=torch.device('cpu'))
+        with torch.no_grad():
+            x_proj = self.encoder(x)
+        return x_proj.cpu().numpy()
+
     # init various types of detectors
     def init_detector(self,detector_type:str, reference_data:np.ndarray, encoder_fn:partial, detector_name:str =None, save_dec:bool = False):
         try:
