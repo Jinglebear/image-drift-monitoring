@@ -34,6 +34,9 @@ class UntrainedAutoencoder():
         self.dectectorLSDD : LSDDDrift = None
         self.detectorCVM : CVMDrift = None
 
+        """ encoder """
+        self.encoder_fn : partial = None
+
     # tensorflow encoder 
     def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int]):
         tf.random.set_seed(0) # random
@@ -48,7 +51,7 @@ class UntrainedAutoencoder():
                 Dense(encoding_dim)
             ]
         )
-        return partial(preprocess_drift,model=encoder_net,batch_size=self.config['UAE']['BATCH_SIZE'])
+        self.partial = partial(preprocess_drift,model=encoder_net,batch_size=self.config['UAE']['BATCH_SIZE'])
     
     # def init_default_py_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
     #     encoder_net = nn.Sequential(
@@ -66,19 +69,19 @@ class UntrainedAutoencoder():
     #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
     # init various types of detectors
-    def init_detector(self,detector_type:str, reference_data:np.ndarray, encoder_fn:partial, detector_name:str =None, save_dec:bool = False):
+    def init_detector(self,detector_type:str, reference_data:np.ndarray,detector_name:str =None, save_dec:bool = False):
         try:
             if detector_type == 'KS':
-                detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
+                detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorKS = detector
             elif detector_type == 'MMD':
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorMMD = detector
             elif detector_type == 'CVM':
-                detector = CVMDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.dectectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')
