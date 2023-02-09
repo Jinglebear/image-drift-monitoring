@@ -34,15 +34,15 @@ class PrincipalComponentAnalysis():
 
     # pca init 
     def init_pca(self,x_ref: np.ndarray,) -> PCA:
-        # try:
-        shape = x_ref.shape
-        x_ref = np.reshape(x_ref,(shape[0],int(shape[1]*shape[2]*shape[3]))) 
-        print(x_ref.shape)
-        self.pca = PCA(int(self.config['PCA_N_COMPONENTS']))
-        self.pca.fit(x_ref) # fitting x_ref to pca 
-        self.logger.info('init_pca(): fitted x_ref to pca')
-        # except Exception as e:
-        #     self.logger.exception('Error in init pca()',e)
+        try:
+            shape = x_ref.shape
+            x_ref = np.reshape(x_ref,(shape[0],int(shape[1]*shape[2]*shape[3]))) 
+            print(x_ref.shape)
+            self.pca = PCA(int(self.config['PCA']['PCA_N_COMPONENTS']))
+            self.pca.fit(x_ref) # fitting x_ref to pca 
+            self.logger.info('init_pca(): fitted x_ref to pca')
+        except Exception as e:
+            self.logger.exception('Error in init pca()',e)
         return self.pca
 
     # init various types of detectors
@@ -51,23 +51,23 @@ class PrincipalComponentAnalysis():
             shape = reference_data.shape
             reference_data = np.reshape(reference_data,(shape[0],int(shape[1]*shape[2]*shape[3])))
             if detector_type == 'KS' and self.pca is not None:
-                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+                detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.pca.transform)
                 self.detectorKS = detector
             elif detector_type == 'MMD' and self.pca is not None:
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.pca.transform)
                 self.detectorMMD = detector
             elif detector_type == 'CVM' and self.pca is not None:
-                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.pca.transform)
                 self.detectorCVM = detector
             elif detector_type == 'LSDD' and self.pca is not None:
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.pca.transform)
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.pca.transform)
                 self.dectectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type / PCA not initialized')
             self.logger.info('{} Detector initialized'.format(detector_type))
             if(save_dec and detector_name):
                 try:
-                    save_detector(detector,"{}/{}".format(self.config['DETECTOR_DIR_PATH'],detector_name))
+                    save_detector(detector,"{}/{}".format(self.config['PATHS']['DETECTOR_DIR_PATH'],detector_name))
                 except Exception as e:
                     self.logger.info('Error in init_detector({}:{}): Error Saving Detector'.format(detector_type,detector_name),e)
         except Exception as e:

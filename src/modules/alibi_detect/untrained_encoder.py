@@ -6,6 +6,9 @@ from functools import partial
 # tensorflow imports
 import tensorflow as tf
 from keras.layers import Conv2D, Dense, Flatten, InputLayer
+# pytorch imports 
+import torch
+import torch.nn as nn
 # alibi-detect imports
 from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
 from alibi_detect.saving import save_detector, load_detector
@@ -32,7 +35,7 @@ class UntrainedAutoencoder():
         self.detectorCVM : CVMDrift = None
 
     # tensorflow encoder 
-    def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
+    def init_default_tf_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int]):
         tf.random.set_seed(0) # random
         # self.encoding_dim = encoding_dim # check later
         encoder_net = tf.keras.Sequential(
@@ -45,29 +48,44 @@ class UntrainedAutoencoder():
                 Dense(encoding_dim)
             ]
         )
-        return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
+        return partial(preprocess_drift,model=encoder_net,batch_size=self.config['UAE']['BATCH_SIZE'])
     
+    # def init_default_py_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
+    #     encoder_net = nn.Sequential(
+    #         nn.Conv2d(3,8,5,stride=3,padding=1), # (batch, 8, 32, 32)
+    #         nn.ReLU(),
+    #         nn.Conv2d(8,12,4,stride=2,padding=1), # (batch,12,16,16)
+    #         nn.ReLU(),
+    #         nn.Conv2d(12,16,4,stride=2,padding=1), # (batch,16,8,8)
+    #         nn.ReLU(),
+    #         nn.Conv2d(16,20,4,stride=2,padding=1), # (batch,20,4,4)
+    #         nn.ReLU(),
+    #         nn.Conv2d(20,encoding_dim,4,stride=1,padding=0), #(batch,enc_dim,1,1)
+    #         nn.Flatten(),   
+    #     )
+    #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
+
     # init various types of detectors
     def init_detector(self,detector_type:str, reference_data:np.ndarray, encoder_fn:partial, detector_name:str =None, save_dec:bool = False):
         try:
             if detector_type == 'KS':
-                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
                 self.detectorKS = detector
             elif detector_type == 'MMD':
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
                 self.detectorMMD = detector
             elif detector_type == 'CVM':
-                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=encoder_fn)
                 self.dectectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')
             self.logger.info('{} Detector initialized'.format(detector_type))
             if(save_dec and detector_name):
                 try:
-                    save_detector(detector,"{}/{}".format(self.config['DETECTOR_DIR_PATH'],detector_name))
+                    save_detector(detector,"{}/{}".format(self.config['PATHS']['DETECTOR_DIR_PATH'],detector_name))
                 except Exception as e:
                     self.logger.info('Error in init_detector({}:{}): Error Saving Detector'.format(detector_type,detector_name),e)
         except Exception as e:
