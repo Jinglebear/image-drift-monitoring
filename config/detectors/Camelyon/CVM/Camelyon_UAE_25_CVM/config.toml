@@ -1,0 +1,17 @@
+name = "CVMDrift"
+backend = "tensorflow"
+x_ref = "x_ref.npy"
+preprocess_fn = "None"
+input_shape = "None"
+data_type = "None"
+x_ref_preprocessed = false
+p_val = 0.05
+preprocess_at_init = true
+update_x_ref = "None"
+correction = "bonferroni"
+n_features = "None"
+
+[meta]
+version = "0.10.4"
+config_spec = "0.1"
+version_warning = false
