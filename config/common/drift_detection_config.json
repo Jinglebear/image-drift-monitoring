@@ -2,7 +2,7 @@
     "VERSION" : 0.1,
     "PATHS" : {
         "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/MMD"
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/UAE"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
@@ -11,5 +11,5 @@
     },
     "PCA" : {"PCA_N_COMPONENTS" : 200},
     "TAE" : {"ENC_DIM":32, "BATCH_SIZE":32, "EPOCHS":5, "LEARNING_RATE":1e-3},
-    "UAE" : {"BATCH_SIZE" : 512}
+    "UAE" : {"BATCH_SIZE" : 128}
 }
