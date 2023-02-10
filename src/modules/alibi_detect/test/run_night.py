@@ -139,23 +139,23 @@ def main():
     # myUAE = None
 
 
-    camelyon_train_60_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_60_ds.npz')
-    camelyon_train_60 = camelyon_train_60_comp['arr_0']
+    # camelyon_train_60_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_60_ds.npz')
+    # camelyon_train_60 = camelyon_train_60_comp['arr_0']
 
-    myUAE = UntrainedAutoencoder(drift_detection_config)
-    myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_60.shape[1:])
-    myUAE.init_detector(detector_type='KS',reference_data=camelyon_train_60,detector_name='Camelyon_UAE_60_KS',save_dec=True)
+    # myUAE = UntrainedAutoencoder(drift_detection_config)
+    # myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_60.shape[1:])
+    # myUAE.init_detector(detector_type='KS',reference_data=camelyon_train_60,detector_name='Camelyon_UAE_60_KS',save_dec=True)
 
-    camelyon_train_60_comp = None
-    camelyon_train_60 = None
-    myUAE = None
+    # camelyon_train_60_comp = None
+    # camelyon_train_60 = None
+    # myUAE = None
 
     camelyon_train_65_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_65_ds.npz')
     camelyon_train_65 = camelyon_train_65_comp['arr_0']
 
     myUAE = UntrainedAutoencoder(drift_detection_config)
     myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_65.shape[1:])
-    myUAE.init_detector(detector_type='KS',reference_data=camelyon_train_60,detector_name='Camelyon_UAE_65_KS',save_dec=True)
+    myUAE.init_detector(detector_type='KS',reference_data=camelyon_train_65,detector_name='Camelyon_UAE_65_KS',save_dec=True)
 
     camelyon_train_65_comp = None
     camelyon_train_65 = None
@@ -378,7 +378,7 @@ def main():
 
     myUAE = UntrainedAutoencoder(drift_detection_config)
     myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_65.shape[1:])
-    myUAE.init_detector(detector_type='CVM',reference_data=camelyon_train_60,detector_name='Camelyon_UAE_65_CVM',save_dec=True)
+    myUAE.init_detector(detector_type='CVM',reference_data=camelyon_train_65,detector_name='Camelyon_UAE_65_CVM',save_dec=True)
 
     camelyon_train_65_comp = None
     camelyon_train_65 = None
@@ -589,7 +589,7 @@ def main():
 
     myUAE = UntrainedAutoencoder(drift_detection_config)
     myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_60.shape[1:])
-    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_60,backend='pytorch',detector_name='Camelyon_UAE_60_MCVM',save_dec=True)
+    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_60,backend='pytorch',detector_name='Camelyon_UAE_60_MMD',save_dec=True)
 
     camelyon_train_60_comp = None
     camelyon_train_60 = None
@@ -599,8 +599,8 @@ def main():
     camelyon_train_65 = camelyon_train_65_comp['arr_0']
 
     myUAE = UntrainedAutoencoder(drift_detection_config)
-    myUAE.init_default_py_encoder()
-    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_60,backend='pytorch',detector_name='Camelyon_UAE_65_MMD_torch',save_dec=True)
+    myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_65.shape[1:])
+    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_65,backend='pytorch',detector_name='Camelyon_UAE_65_MMD',save_dec=True)
 
     camelyon_train_65_comp = None
     camelyon_train_65 = None
@@ -610,8 +610,8 @@ def main():
     camelyon_train_70 = camelyon_train_70_comp['arr_0']
 
     myUAE = UntrainedAutoencoder(drift_detection_config)
-    myUAE.init_default_py_encoder()
-    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_70,backend='pytorch',detector_name='Camelyon_UAE_70_MMD_torch',save_dec=True)
+    myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_70.shape[1:])
+    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_70,backend='pytorch',detector_name='Camelyon_UAE_70_MMD',save_dec=True)
 
     camelyon_train_70_comp = None
     camelyon_train_70 = None
@@ -823,7 +823,7 @@ def main():
 
     myUAE = UntrainedAutoencoder(drift_detection_config)
     myUAE.init_default_tf_encoder(encoding_dim=96,input_shape=camelyon_train_65.shape[1:])
-    myUAE.init_detector(detector_type='LSDD',reference_data=camelyon_train_60,detector_name='Camelyon_UAE_65_LSDD',save_dec=True)
+    myUAE.init_detector(detector_type='LSDD',reference_data=camelyon_train_65,detector_name='Camelyon_UAE_65_LSDD',save_dec=True)
 
     camelyon_train_65_comp = None
     camelyon_train_65 = None
