@@ -67,10 +67,10 @@ class TrainedAutoencoder():
         return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
     def init_default_pt_autoencoder(self,dl : DataLoader):
-        ENC_DIM = 32
-        BATCH_SIZE = 32
-        EPOCHS =5
-        LEARNING_RATE = 1e-3
+        ENC_DIM = self.config['TAE']['ENC_DIM']
+        BATCH_SIZE = self.config['TAE']['BATCH_SIZE']
+        EPOCHS = self.config['TAE']['EPOCHS']
+        LEARNING_RATE = self.config['TAE']['LEARNING_RATE']
 
         self.encoder = nn.Sequential(
             nn.Conv2d(3,8,5,stride=3,padding=1), # (batch, 8, 32, 32)
@@ -108,19 +108,19 @@ class TrainedAutoencoder():
         return x_proj.cpu().numpy()
 
     # init various types of detectors
-    def init_detector(self,detector_type:str, reference_data:np.ndarray, encoder_fn:partial, detector_name:str =None, save_dec:bool = False):
-        try:
+    def init_detector(self,detector_type:str, reference_data:np.ndarray, detector_name:str =None, save_dec:bool = False):
+        # try:
             if detector_type == 'KS':
-                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorKS = detector
             elif detector_type == 'MMD':
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorMMD = detector
             elif detector_type == 'CVM':
-                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=encoder_fn)
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.dectectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')
@@ -130,8 +130,8 @@ class TrainedAutoencoder():
                     save_detector(detector,"{}/{}".format(self.config['DETECTOR_DIR_PATH'],detector_name))
                 except Exception as e:
                     self.logger.info('Error in init_detector({}:{}): Error Saving Detector'.format(detector_type,detector_name),e)
-        except Exception as e:
-                self.logger.exception('Error in init_detector({}): Error Initializing Detector'.format(detector_type),e)
+        # except Exception as e:
+        #         self.logger.exception('Error in init_detector({}): Error Initializing Detector'.format(detector_type),e)
 
 
     # import detector

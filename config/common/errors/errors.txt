@@ -1,0 +1,49 @@
+Traceback (most recent call last):
+  File "src/modules/alibi_detect/test/run_night.py", line 30, in <module>
+    main()
+  File "src/modules/alibi_detect/test/run_night.py", line 22, in main
+    myUAE.init_detector(detector_type='MMD',reference_data=camelyon_train_20,detector_name='Camelyon_UAE_20_MMD',save_dec=True)
+  File "/home/ubuntu/image-drift-monitoring/src/modules/alibi_detect/untrained_encoder.py", line 76, in init_detector
+    detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],backend=backend,preprocess_fn=self.encoder_fn)
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/alibi_detect/utils/warnings.py", line 17, in wrapper
+    return f(*args, **kwargs)
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/alibi_detect/cd/mmd.py", line 119, in __init__
+    self._detector = detector(*args, **kwargs)  # type: ignore
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/alibi_detect/utils/warnings.py", line 17, in wrapper
+    return f(*args, **kwargs)
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/alibi_detect/cd/tensorflow/mmd.py", line 89, in __init__
+    self.k_xx = self.kernel(self.x_ref, self.x_ref, infer_sigma=self.infer_sigma)
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/keras/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/alibi_detect/utils/tensorflow/kernels.py", line 83, in call
+    sigma = self.init_sigma_fn(x, y, dist)
+  File "/home/ubuntu/miniconda3/envs/alibitorchwhy/lib/python3.8/site-packages/alibi_detect/utils/tensorflow/kernels.py", line 29, in sigma_median
+    sigma = tf.expand_dims((.5 * tf.sort(tf.reshape(dist, (-1,)))[n_median]) ** .5, axis=0)
+tensorflow.python.framework.errors_impl.InvalidArgumentError: Exception encountered when calling layer 'gaussian_rbf' (type GaussianRBF).
+
+MMD Detector ab 20% Camelyon Train
+{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}} Shape output type is 32-bit  but dim 0 is 3658677169 [Op:Shape]
+
+Call arguments received by layer 'gaussian_rbf' (type GaussianRBF):
+  • x=tf.Tensor(shape=(60487, 96), dtype=float32)
+  • y=array([[ 0.04427198, -0.01342454, -0.02021142, ..., -0.02701507,
+         0.00436881, -0.02925281],
+       [ 0.061876  , -0.0498049 , -0.01292058, ..., -0.01900158,
+         0.01527934, -0.04493073],
+       [ 0.06934997, -0.03069605, -0.01620284, ..., -0.03619876,
+         0.01425046, -0.03221488],
+       ...,
+       [ 0.04113886, -0.03935402, -0.00932803, ..., -0.03118539,
+         0.00248169, -0.03949928],
+       [ 0.06830765, -0.0242939 , -0.00776598, ..., -0.03721023,
+         0.01734594, -0.04060628],
+       [ 0.05671862, -0.02708255, -0.02139116, ..., -0.02963132,
+         0.02086852, -0.03599085]], dtype=float32)
+  • infer_sigma=True
+
+LSDD Detector ab 20% Camelyon Train
+name": "InvalidArgumentError",
+	"message": "Exception encountered when calling layer 'gaussian_rbf_2' 
+  (type GaussianRBF).\n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}} 
+  Shape output type is 32-bit  but dim 0 is 3658677169 [Op:Shape]\n\nCall arguments received by layer 'gaussian_rbf_2' (type GaussianRBF):\n  
+  • x=tf.Tensor(shape=(60487, 96), dtype=float32)\n  • y=tf.Tensor(shape=(60487, 96), dtype=float32)\n  • infer_sigma=True",

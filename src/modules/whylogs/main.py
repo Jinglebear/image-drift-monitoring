@@ -7,7 +7,6 @@ from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from whylogs_logger import Whylogs_Logger
 from wilds import get_dataset
 from whylogs.core.view.dataset_profile_view import DatasetProfileView
 
@@ -16,13 +15,16 @@ import torch
 import torchvision
 import PIL
 
-
+# import sys
+# sys.path.append('/home/ubuntu/image-drift-monitoring/src')
+from whylogs_logger import Whylogs_Logger
 def main():
+
     CAMELYON_ROOT_PATH = '{}/data/camelyon17_v1.0'.format(os.getcwd())
     GLOBALWHEAT_ROOT_PATH = '{}/data/global_wheat_v1.1'.format(os.getcwd())
     IWILDCAM_ROOT_PATH = '{}/data/iwildcam_v2.0'.format(os.getcwd())
     POVERTY_ROOT_PATH =  '{}/data/poverty_v1.1'.format(os.getcwd())
-
+    RXRX1_ROOT_PATH = '/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0'
     CSV_PATH = '{}/data/whylogs_output/profile_compare/'.format(os.getcwd())
 
     
@@ -38,7 +40,8 @@ def main():
     # dataset = get_dataset(dataset="iwildcam", download=False)
     """ WILDS POVERTY DATASET """
     # dataset = get_dataset(dataset="poverty",download=False)
-
+    """ WILDS RXRX1 DATASET """
+    dataset = get_dataset(dataset="rxrx1",download=False)
     
 
 
@@ -53,7 +56,7 @@ def main():
 
     # Get the test set (out of distribution)
 
-    # test_data = dataset.get_subset("test")
+    test_data = dataset.get_subset("test")
 
     """ MY TESTING """
    
@@ -72,10 +75,10 @@ def main():
     #         percentage=i,
     #         indices=train_data.indices,
     #         dataset=train_data.dataset,
-    #         num_processes=6,
+    #         num_processes=30,
     #         split='train',
-    #         dataset_name='poverty',
-    #         dataset_dir_path=POVERTY_ROOT_PATH)
+    #         dataset_name='rxrx1',
+    #         dataset_dir_path=RXRX1_ROOT_PATH)
 
     """ LOG VAL SPLIT TO BINARY USING MULTIPROCESSING"""
     # for j in range(5,105,5):    
@@ -84,33 +87,33 @@ def main():
     #         percentage=j,
     #         indices=val_data.indices,
     #         dataset=val_data.dataset,
-    #         num_processes=6,
+    #         num_processes=30,
     #         split='val',
-    #         dataset_name='poverty',
-    #         dataset_dir_path=POVERTY_ROOT_PATH)
+    #         dataset_name='rxrx1',
+    #         dataset_dir_path=RXRX1_ROOT_PATH)
     
     """ LOG TEST SPLIT TO BINARY USING MULTIPROCESSING"""
-    # for k in range(5,105,5):    
-    #     log_profile_to_bin_multiple_processes(
-    #         w_logger=w_logger,
-    #         percentage=k,
-    #         indices=test_data.indices,
-    #         dataset=test_data.dataset,
-    #         num_processes=6,
-    #         split='test',
-    #         dataset_name='poverty',
-    #         dataset_dir_path=POVERTY_ROOT_PATH)
+    for k in range(5,105,5):    
+        log_profile_to_bin_multiple_processes(
+            w_logger=w_logger,
+            percentage=k,
+            indices=test_data.indices,
+            dataset=test_data.dataset,
+            num_processes=30,
+            split='test',
+            dataset_name='rxrx1',
+            dataset_dir_path=RXRX1_ROOT_PATH)
 
     dt = timer() - t
     print(f'Time (s) {dt:.3f}')
 
-    profile_1 = w_logger.deserialize_profile('/home/jinglewsl/evoila/projects/image-drift-monitoring/data','train_camelyon_profile_100')
-    # w_logger.create_profile_summary_json(profile=profile_1,data_directory_path='/home/jinglewsl/evoila/projects/image-drift-monitoring/data/',summary_name='train_camelyon_profile_100')
-    profile_2 = w_logger.deserialize_profile('/home/jinglewsl/evoila/projects/image-drift-monitoring/data/','test_camelyon_profile_100')
-    w_logger.create_profile_compare_summary_json(target_profile=profile_2,
-                                    ref_profile=profile_1,
-                                    data_directory_path='/home/jinglewsl/evoila/projects/image-drift-monitoring/data/',
-                                    compare_summary_name='test_camelyon_100_vs_train_camelyon_100')
+    # profile_1 = w_logger.deserialize_profile('/home/jinglewsl/evoila/projects/image-drift-monitoring/data','train_camelyon_profile_100')
+    # # w_logger.create_profile_summary_json(profile=profile_1,data_directory_path='/home/jinglewsl/evoila/projects/image-drift-monitoring/data/',summary_name='train_camelyon_profile_100')
+    # profile_2 = w_logger.deserialize_profile('/home/jinglewsl/evoila/projects/image-drift-monitoring/data/','test_camelyon_profile_100')
+    # w_logger.create_profile_compare_summary_json(target_profile=profile_2,
+    #                                 ref_profile=profile_1,
+    #                                 data_directory_path='/home/jinglewsl/evoila/projects/image-drift-monitoring/data/',
+    #                                 compare_summary_name='test_camelyon_100_vs_train_camelyon_100')
 
 
 # logging split (x) from dataset (y) with percentage (z) to binary x_y_profile_z.bin
