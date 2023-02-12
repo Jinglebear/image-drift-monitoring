@@ -2,14 +2,14 @@
     "VERSION" : 0.1,
     "PATHS" : {
         "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA/CVM"
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_100"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
         "WINDOW_SIZE" : 200,
         "AVAILABLE_DETECTOR_TYPES" : ["KS", "CVM", "MMD", "LSDD"]
     },
-    "PCA" : {"PCA_N_COMPONENTS" : 200},
+    "PCA" : {"PCA_N_COMPONENTS" : 100},
     "TAE" : {"ENC_DIM":32, "BATCH_SIZE":64, "EPOCHS":8, "LEARNING_RATE":1e-2},
     "UAE" : {"BATCH_SIZE" : 256}
 }
