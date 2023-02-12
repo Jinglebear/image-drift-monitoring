@@ -22,3 +22,4 @@ nohup.out
 *.npz
 *.h5
 *.toml
+*.dill
