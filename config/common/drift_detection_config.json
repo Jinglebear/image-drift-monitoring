@@ -2,7 +2,7 @@
     "VERSION" : 0.1,
     "PATHS" : {
         "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/UAE/LSDD"
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/UAE/LSDD"
     },
     "GENERAL": {
         "P_VAL" : 0.05,

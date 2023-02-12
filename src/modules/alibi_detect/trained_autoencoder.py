@@ -111,16 +111,16 @@ class TrainedAutoencoder():
     def init_detector(self,detector_type:str, reference_data:np.ndarray, detector_name:str =None, save_dec:bool = False):
         # try:
             if detector_type == 'KS':
-                detector = KSDrift(reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
+                detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorKS = detector
             elif detector_type == 'MMD':
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorMMD = detector
             elif detector_type == 'CVM':
-                detector = CVMDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
+                detector = CVMDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['P_VAL'],preprocess_fn=self.encoder_fn)
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.dectectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')

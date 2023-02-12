@@ -47,3 +47,17 @@ name": "InvalidArgumentError",
   (type GaussianRBF).\n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}} 
   Shape output type is 32-bit  but dim 0 is 3658677169 [Op:Shape]\n\nCall arguments received by layer 'gaussian_rbf_2' (type GaussianRBF):\n  
   • x=tf.Tensor(shape=(60487, 96), dtype=float32)\n  • y=tf.Tensor(shape=(60487, 96), dtype=float32)\n  • infer_sigma=True",
+
+
+  MMD Detector ab 40% iWildcam Train
+  "name": "InvalidArgumentError",
+	"message": "Exception encountered when calling layer 'gaussian_rbf' (type GaussianRBF).
+  \n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}}
+   Shape output type is 32-bit  but dim 0 is 2695997929 [Op:Shape]\n\nCall arguments received by layer 'gaussian_rbf' (type GaussianRBF):\n  
+   • x=tf.Tensor(shape=(51923, 100), dtype=float32)\n  • y=array([[-0.00374479,  0.00242485, -0.02370999, ..., -0.00025629,\n         0.01301828, -0.01700422],
+   \n       [-0.01117674, -0.02345294, -0.00635562, ...,  0.01071804,\n         0.01722299, -0.0231316 ],
+   \n       [-0.01773886,  0.0274651 , -0.03303813, ..., -0.03657789,\n         0.03260332,  0.00468316],
+   \n       ...,\n       [-0.02024351, -0.02346239, -0.0313017 , ..., -0.00718694,\n         0.03192844, -0.01591797],
+   \n       [-0.009049  ,  0.02156958, -0.03833644, ..., -0.05637287,\n         0.03008577, -0.00346438],
+   \n       [-0.00322371, -0.01513189, -0.01947758, ...,  0.00487578,\n         0.04058766, -0.01953305]], dtype=float32)\n
+   • infer_sigma=True",
