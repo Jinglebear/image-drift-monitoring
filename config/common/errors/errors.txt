@@ -61,3 +61,10 @@ name": "InvalidArgumentError",
    \n       [-0.009049  ,  0.02156958, -0.03833644, ..., -0.05637287,\n         0.03008577, -0.00346438],
    \n       [-0.00322371, -0.01513189, -0.01947758, ...,  0.00487578,\n         0.04058766, -0.01953305]], dtype=float32)\n
    • infer_sigma=True",
+
+   LSDD Detector ab 40% iWildcam Train
+   name": "InvalidArgumentError",
+	"message": "Exception encountered when calling layer 'gaussian_rbf_15' (type GaussianRBF).
+  \n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}}
+   Shape output type is 32-bit  but dim 0 is 2695997929 [Op:Shape]\n\nCall arguments received by layer 'gaussian_rbf_15' (type GaussianRBF):\n
+     • x=tf.Tensor(shape=(51923, 100), dtype=float32)\n  • y=tf.Tensor(shape=(51923, 100), dtype=float32)\n  • infer_sigma=True",
