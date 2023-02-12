@@ -38,10 +38,8 @@ def main():
     # dataset = get_dataset(dataset="globalwheat", download=False)
     """ WILDS IWILDCAM DATASET """
     # dataset = get_dataset(dataset="iwildcam", download=False)
-    """ WILDS POVERTY DATASET """
-    # dataset = get_dataset(dataset="poverty",download=False)
     """ WILDS RXRX1 DATASET """
-    dataset = get_dataset(dataset="rxrx1",download=False)
+    # dataset = get_dataset(dataset="rxrx1",download=False)
     
 
 
@@ -56,7 +54,7 @@ def main():
 
     # Get the test set (out of distribution)
 
-    test_data = dataset.get_subset("test")
+    # test_data = dataset.get_subset("test")
 
     """ MY TESTING """
    
@@ -93,16 +91,16 @@ def main():
     #         dataset_dir_path=RXRX1_ROOT_PATH)
     
     """ LOG TEST SPLIT TO BINARY USING MULTIPROCESSING"""
-    for k in range(5,105,5):    
-        log_profile_to_bin_multiple_processes(
-            w_logger=w_logger,
-            percentage=k,
-            indices=test_data.indices,
-            dataset=test_data.dataset,
-            num_processes=30,
-            split='test',
-            dataset_name='rxrx1',
-            dataset_dir_path=RXRX1_ROOT_PATH)
+    # for k in range(5,105,5):    
+    #     log_profile_to_bin_multiple_processes(
+    #         w_logger=w_logger,
+    #         percentage=k,
+    #         indices=test_data.indices,
+    #         dataset=test_data.dataset,
+    #         num_processes=30,
+    #         split='test',
+    #         dataset_name='rxrx1',
+    #         dataset_dir_path=RXRX1_ROOT_PATH)
 
     dt = timer() - t
     print(f'Time (s) {dt:.3f}')

@@ -80,9 +80,9 @@ class Whylogs_Logger():
             self.logger.exception('Exception in log_data(): {}'.format(e))
     
     """ log pil images from a list to a profile, set logging date """
-    def log_pil_images_data_from_list(self,data_directory_path:str,pil_data_arr: List[PIL_IMAGE],batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
+    def log_pil_images_data_from_list(self,pil_data_arr: List[PIL_IMAGE],batch_size: int = 0, shuffle: bool = False) -> DatasetProfileView:
         try:
-            self.create_output_dir(data_directory_path) # create output dirs 
+            # self.create_output_dir(data_directory_path) # create output dirs 
             self.logger.info('Started logging PIL image data from array')
             profile = None
             if shuffle and batch_size > 0:
