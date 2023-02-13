@@ -2,7 +2,7 @@
     "VERSION" : 0.1,
     "PATHS" : {
         "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/PCA_n_100"
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/TAE"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
