@@ -43,34 +43,13 @@ def main():
             }
     df_new = pd.DataFrame(data,index=["Size {}".format(i) for i in range(10,210,10)])
 
-    for i in range(10,210,10):
-        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/sudden_drift/globalwheat_test_{}.npz'.format(i))
-        test_i = test_i_comp['arr_0']
-        for j in range(5,105,5):
-            myUAE = UntrainedAutoencoder()
-            myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/CVM/globalwheat_UAE_{}_CVM'.format(j),detector_type='CVM')
-            res = myUAE.make_prediction(target_data=test_i, detector_type='CVM')
-
-            df_new.loc['Size {}'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-    df_new.to_excel('globalwheat_uae_cvm_results.xlsx')
 
     for i in range(10,210,10):
         test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/sudden_drift/globalwheat_test_{}.npz'.format(i))
         test_i = test_i_comp['arr_0']
         for j in range(5,105,5):
             myUAE = UntrainedAutoencoder()
-            myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/MMD/globalwheat_UAE_{}_MMD'.format(j),detector_type='MMD')
-            res = myUAE.make_prediction(target_data=test_i, detector_type='MMD')
-
-            df_new.loc['Size {}'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-    df_new.to_excel('globalwheat_uae_mmd_results.xlsx')
-    
-    for i in range(10,210,10):
-        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/sudden_drift/globalwheat_test_{}.npz'.format(i))
-        test_i = test_i_comp['arr_0']
-        for j in range(5,105,5):
-            myUAE = UntrainedAutoencoder()
-            myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/LSDD/globalwheat_UAE_{}_MMD'.format(j),detector_type='LSDD')
+            myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/LSDD/globalwheat_UAE_{}_LSDD'.format(j),detector_type='LSDD')
             res = myUAE.make_prediction(target_data=test_i, detector_type='LSDD')
 
             df_new.loc['Size {}'.format(i)]['{}'.format(j)] = res['data']['is_drift']
