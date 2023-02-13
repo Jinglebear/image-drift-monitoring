@@ -14,94 +14,89 @@ from torch.utils.data import TensorDataset, DataLoader
 import json 
 import torch
 def main():
-    with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
-            drift_detection_config = json.load(config_file)
+        with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+                drift_detection_config = json.load(config_file)
 
-    for i in range(5,105,5):
-        if(i == 100):
-            iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_ds.npz')
-        else: 
-            iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_{}_ds.npz'.format(i))
-        
-        iwildcam_train = iwildcam_train_comp['arr_0']
+        for i in range(90,105,5):
+                if(i == 100):
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
+                else: 
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
+                
+                camelyon_train = camelyon_train_comp['arr_0']
+                
+                camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
+                camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
 
-        iwildcam_train_0_50   = iwildcam_train[:int(len(iwildcam_train)*0.5)]
-        iwildcam_train_50_100 = iwildcam_train[ int(len(iwildcam_train)*0.5):]
+                myPCA = PrincipalComponentAnalysis(drift_detection_config)
+                myPCA.init_pca(x_ref=camelyon_train_0_50)
+                myPCA.init_detector(detector_type='KS',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_KS'.format(i),save_dec=True)
 
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=iwildcam_train_0_50)
-        myPCA.init_detector(detector_type='KS',reference_data=iwildcam_train_50_100,detector_name='iwildcam_PCA_{}_KS'.format(i),save_dec=True)
+                camelyon_train_comp = None
+                camelyon_train = None
+                camelyon_train_0_50 = None
+                camelyon_train_50_100 =None
+                myPCA = None
 
-        iwildcam_train_comp = None
-        iwildcam_train = None
-        iwildcam_train_0_50 = None
-        iwildcam_train_50_100 =None
-        myPCA = None
+        for i in range(5,105,5):
+                if(i == 100):
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
+                else: 
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
+                
+                camelyon_train = camelyon_train_comp['arr_0']
 
-    for i in range(5,105,5):
-        if(i == 100):
-                iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_ds.npz')
-        else: 
-                iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_{}_ds.npz'.format(i))
-        
-        iwildcam_train = iwildcam_train_comp['arr_0']
+                camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
+                camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
 
-        iwildcam_train_0_50   = iwildcam_train[:int(len(iwildcam_train)*0.5)]
-        iwildcam_train_50_100 = iwildcam_train[ int(len(iwildcam_train)*0.5):]
+                myPCA = PrincipalComponentAnalysis(drift_detection_config)
+                myPCA.init_pca(x_ref=camelyon_train_0_50)
+                myPCA.init_detector(detector_type='CVM',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_CVM'.format(i),save_dec=True)
 
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=iwildcam_train_0_50)
-        myPCA.init_detector(detector_type='CVM',reference_data=iwildcam_train_50_100,detector_name='iwildcam_PCA_{}_CVM'.format(i),save_dec=True)
+                camelyon_train_comp = None
+                camelyon_train = None
+                camelyon_train_0_50 = None
+                camelyon_train_50_100 =None
+                myPCA = None
+        for i in range(5,65,5):
+                if(i == 100):
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
+                else: 
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
 
-        iwildcam_train_comp = None
-        iwildcam_train = None
-        iwildcam_train_0_50 = None
-        iwildcam_train_50_100 =None
-        myPCA = None
+                camelyon_train = camelyon_train_comp['arr_0']
 
+                camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
+                camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
 
-    for i in range(5,105,5):
-        if(i == 100):
-                iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_ds.npz')
-        else: 
-                iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_{}_ds.npz'.format(i))
+                myPCA = PrincipalComponentAnalysis(drift_detection_config)
+                myPCA.init_pca(x_ref=camelyon_train_0_50)
+                myPCA.init_detector(detector_type='MMD',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_MMD'.format(i),save_dec=True)
 
-        iwildcam_train = iwildcam_train_comp['arr_0']
+                camelyon_train_comp = None
+                camelyon_train = None
+                camelyon_train_0_50 = None
+                camelyon_train_50_100 =None
+                myPCA = None
+        for i in range(5,65,5):
+                if(i == 100):
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
+                else: 
+                        camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
+                camelyon_train = camelyon_train_comp['arr_0']
 
-        iwildcam_train_0_50   = iwildcam_train[:int(len(iwildcam_train)*0.5)]
-        iwildcam_train_50_100 = iwildcam_train[ int(len(iwildcam_train)*0.5):]
+                camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
+                camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
 
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=iwildcam_train_0_50)
-        myPCA.init_detector(detector_type='MMD',reference_data=iwildcam_train_50_100,detector_name='iwildcam_PCA_{}_MMD'.format(i),save_dec=True)
+                myPCA = PrincipalComponentAnalysis(drift_detection_config)
+                myPCA.init_pca(x_ref=camelyon_train_0_50)
+                myPCA.init_detector(detector_type='LSDD',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_LSDD'.format(i),save_dec=True)
 
-        iwildcam_train_comp = None
-        iwildcam_train = None
-        iwildcam_train_0_50 = None
-        iwildcam_train_50_100 =None
-        myPCA = None
-    for i in range(5,105,5):
-        if(i == 100):
-                iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_ds.npz')
-        else: 
-                iwildcam_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/iwildcam_train_{}_ds.npz'.format(i))
-        iwildcam_train = iwildcam_train_comp['arr_0']
-
-        iwildcam_train_0_50   = iwildcam_train[:int(len(iwildcam_train)*0.5)]
-        iwildcam_train_50_100 = iwildcam_train[ int(len(iwildcam_train)*0.5):]
-
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=iwildcam_train_0_50)
-        myPCA.init_detector(detector_type='LSDD',reference_data=iwildcam_train_50_100,detector_name='iwildcam_PCA_{}_LSDD'.format(i),save_dec=True)
-
-        iwildcam_train_comp = None
-        iwildcam_train = None
-        iwildcam_train_0_50 = None
-        iwildcam_train_50_100 =None
-        myPCA = None
-
-
-
+                camelyon_train_comp = None
+                camelyon_train = None
+                camelyon_train_0_50 = None
+                camelyon_train_50_100 =None
+                myPCA = None
 # ======================================================================================
 # call
 if __name__ == "__main__":
