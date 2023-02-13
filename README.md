@@ -2,7 +2,6 @@
 ## Measuring Data Drift of Image Data for CV Models
 ### Utilizing:
 - whylogs (https://github.com/whylabs/whylogs)
-- torchdrift (https://torchdrift.org/)
 - alibi-detect (https://github.com/SeldonIO/alibi-detect)
 
 ### Inpired by:
