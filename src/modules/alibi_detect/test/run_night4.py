@@ -12,96 +12,65 @@ import numpy as np
 from modules.alibi_detect.trained_autoencoder import TrainedAutoencoder
 from torch.utils.data import TensorDataset, DataLoader
 import json 
+
+import pandas as pd
 import torch
 def main():
-    with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
             drift_detection_config = json.load(config_file)
-
-    for i in range(5,105,5):
-        if(i == 100):
-            camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
-        else: 
-            camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
-        
-        camelyon_train = camelyon_train_comp['arr_0']
-
-        camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
-        camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
-
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=camelyon_train_0_50)
-        myPCA.init_detector(detector_type='KS',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_KS'.format(i),save_dec=True)
-
-        camelyon_train_comp = None
-        camelyon_train = None
-        camelyon_train_0_50 = None
-        camelyon_train_50_100 =None
-        myPCA = None
-
-    for i in range(5,105,5):
-        if(i == 100):
-                camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
-        else: 
-                camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
-        
-        camelyon_train = camelyon_train_comp['arr_0']
-
-        camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
-        camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
-
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=camelyon_train_0_50)
-        myPCA.init_detector(detector_type='CVM',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_CVM'.format(i),save_dec=True)
-
-        camelyon_train_comp = None
-        camelyon_train = None
-        camelyon_train_0_50 = None
-        camelyon_train_50_100 =None
-        myPCA = None
+        data = {
+        "100":["{}".format(i) for i in range(1,21,1)],
+        "95" : ["{}".format(i) for i in range(1,21,1)],
+        "90" : ["{}".format(i) for i in range(1,21,1)],
+        "85" : ["{}".format(i) for i in range(1,21,1)],
+        "80" : ["{}".format(i) for i in range(1,21,1)],
+        "75" : ["{}".format(i) for i in range(1,21,1)],
+        "70" : ["{}".format(i) for i in range(1,21,1)],
+        "65" : ["{}".format(i) for i in range(1,21,1)],
+        "60" : ["{}".format(i) for i in range(1,21,1)],
+        "55" : ["{}".format(i) for i in range(1,21,1)],
+        "50" : ["{}".format(i) for i in range(1,21,1)],
+        "45" : ["{}".format(i) for i in range(1,21,1)],
+        "40" : ["{}".format(i) for i in range(1,21,1)],
+        "35" : ["{}".format(i) for i in range(1,21,1)],
+        "30" : ["{}".format(i) for i in range(1,21,1)],
+        "25" : ["{}".format(i) for i in range(1,21,1)],
+        "20" : ["{}".format(i) for i in range(1,21,1)],
+        "15" : ["{}".format(i) for i in range(1,21,1)],
+        "10" : ["{}".format(i) for i in range(1,21,1)],
+        "5" : ["{}".format(i) for i in range(1,21,1)],
+        }
+        df_new = pd.DataFrame(data,index=["Size {}".format(i) for i in range(10,210,10)])
 
 
-    for i in range(5,105,5):
-        if(i == 100):
-                camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
-        else: 
-                camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
+        for i in range(10,210,10):
+                test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
+                test_i = test_i_comp['arr_0']
+                for j in range(5,105,5):
+                        myUAE = UntrainedAutoencoder()
+                        myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/UAE/CVM/Camelyon_UAE_{}_CVM'.format(j),detector_type='CVM')
+                        res = myUAE.make_prediction(target_data=test_i, detector_type='CVM')
+                        df_new.loc['Size {}'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('camelyon_uae_CVM_results.xlsx')
 
-        camelyon_train = camelyon_train_comp['arr_0']
-
-        camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
-        camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
-
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=camelyon_train_0_50)
-        myPCA.init_detector(detector_type='MMD',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_MMD'.format(i),save_dec=True)
-
-        camelyon_train_comp = None
-        camelyon_train = None
-        camelyon_train_0_50 = None
-        camelyon_train_50_100 =None
-        myPCA = None
-    for i in range(5,105,5):
-        if(i == 100):
-                camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_ds.npz')
-        else: 
-                camelyon_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/camelyon_train_{}_ds.npz'.format(i))
-        camelyon_train = camelyon_train_comp['arr_0']
-
-        camelyon_train_0_50   = camelyon_train[:int(len(camelyon_train)*0.5)]
-        camelyon_train_50_100 = camelyon_train[ int(len(camelyon_train)*0.5):]
-
-        myPCA = PrincipalComponentAnalysis(drift_detection_config)
-        myPCA.init_pca(x_ref=camelyon_train_0_50)
-        myPCA.init_detector(detector_type='LSDD',reference_data=camelyon_train_50_100,detector_name='camelyon_PCA_{}_LSDD'.format(i),save_dec=True)
-
-        camelyon_train_comp = None
-        camelyon_train = None
-        camelyon_train_0_50 = None
-        camelyon_train_50_100 =None
-        myPCA = None
-
-
-
+        for i in range(10,210,10):
+                test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
+                test_i = test_i_comp['arr_0']
+                for j in range(5,20,5):
+                        myUAE = UntrainedAutoencoder()
+                        myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/UAE/MMD/Camelyon_UAE_{}_MMD'.format(j),detector_type='MMD')
+                        res = myUAE.make_prediction(target_data=test_i, detector_type='MMD')
+                        df_new.loc['Size {}'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('camelyon_uae_MMD_results.xlsx')
+        for i in range(10,210,10):
+                test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
+                test_i = test_i_comp['arr_0']
+                for j in range(5,20,5):
+                        myUAE = UntrainedAutoencoder()
+                        myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/UAE/LSDD/Camelyon_UAE_{}_LSDD'.format(j),detector_type='LSDD')
+                        res = myUAE.make_prediction(target_data=test_i, detector_type='LSDD')
+                        df_new.loc['Size {}'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('camelyon_uae_MMD_results.xlsx')
 # ======================================================================================
 # call
 if __name__ == "__main__":

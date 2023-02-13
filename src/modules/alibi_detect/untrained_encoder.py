@@ -128,10 +128,10 @@ class UntrainedAutoencoder():
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
 
             
-        print('Drift? {}'.format(labels[preds['data']['is_drift']]))
-        print('Feature-wise p-values:')
-        print(preds['data']['p_val'])
-        print('len:{}'.format(len(preds['data']['p_val']))) 
+        # print('Drift? {}'.format(labels[preds['data']['is_drift']]))
+        # print('Feature-wise p-values:')
+        # print(preds['data']['p_val'])
+        # print('len:{}'.format(int(len(preds['data']['p_val'])))) 
             
         return preds
 
