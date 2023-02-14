@@ -2,14 +2,14 @@
     "VERSION" : 0.1,
     "PATHS" : {
         "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE"
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_50"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
         "WINDOW_SIZE" : 200,
         "AVAILABLE_DETECTOR_TYPES" : ["KS", "CVM", "MMD", "LSDD"]
     },
-    "PCA" : {"PCA_N_COMPONENTS" : 100},
+    "PCA" : {"PCA_N_COMPONENTS" : 50},
     "TAE" : {"ENC_DIM":32, "BATCH_SIZE":32, "EPOCHS":5, "LEARNING_RATE":1e-2},
     "UAE" : {"BATCH_SIZE" : 256}
 }
