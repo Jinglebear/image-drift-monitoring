@@ -26,7 +26,7 @@ class PrincipalComponentAnalysis():
         """ detectors """
         self.detectorKS: KSDrift = None
         self.detectorMMD : MMDDrift = None
-        self.dectectorLSDD : LSDDDrift = None
+        self.detectorLSDD : LSDDDrift = None
         self.detectorCVM : CVMDrift = None
 
         """ pca model """
@@ -61,7 +61,7 @@ class PrincipalComponentAnalysis():
                 self.detectorCVM = detector
             elif detector_type == 'LSDD' and self.pca is not None:
                 detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.pca.transform)
-                self.dectectorLSDD = detector
+                self.detectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type / PCA not initialized')
             self.logger.info('{} Detector initialized'.format(detector_type))
@@ -87,7 +87,7 @@ class PrincipalComponentAnalysis():
                 self.detectorCVM = load_detector(path)
                 self.logger.info('CVM Detector imported')
             elif detector_type == 'LSDD':
-                self.dectectorLSDD = load_detector(path)
+                self.detectorLSDD = load_detector(path)
                 self.logger.info('LSDD Detector imported')
             else:
                 raise ValueError('Invalid Detector Type')
@@ -105,15 +105,15 @@ class PrincipalComponentAnalysis():
             preds = self.detectorMMD.predict(x=target_data) 
         elif detector_type == 'CVM' and self.detectorCVM is not None:
             preds = self.detectorCVM.predict(x=target_data) 
-        elif detector_type == 'LSDD' and self.dectectorLSDD is not None:
-            preds = self.detectorCVM.predict(x=target_data) 
+        elif detector_type == 'LSDD' and self.detectorLSDD is not None:
+            preds = self.detectorLSDD.predict(x=target_data) 
         else:
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
 
             
-        print('Drift? {}'.format(labels[preds['data']['is_drift']]))
-        print('Feature-wise p-values:')
-        print(preds['data']['p_val'])
-        print('len:{}'.format(len(preds['data']['p_val']))) 
+        # print('Drift? {}'.format(labels[preds['data']['is_drift']]))
+        # print('Feature-wise p-values:')
+        # print(preds['data']['p_val'])
+        # print('len:{}'.format(len(preds['data']['p_val']))) 
             
         return preds
