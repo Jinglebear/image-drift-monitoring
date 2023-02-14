@@ -31,7 +31,7 @@ class UntrainedAutoencoder():
         """ detectors """
         self.detectorKS: KSDrift = None
         self.detectorMMD : MMDDrift = None
-        self.dectectorLSDD : LSDDDrift = None
+        self.detectorLSDD : LSDDDrift = None
         self.detectorCVM : CVMDrift = None
 
         """ encoder """
@@ -80,7 +80,7 @@ class UntrainedAutoencoder():
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
                 detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
-                self.dectectorLSDD = detector
+                self.detectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')
             self.logger.info('{} Detector initialized'.format(detector_type))
@@ -106,7 +106,7 @@ class UntrainedAutoencoder():
                 self.detectorCVM = load_detector(path)
                 self.logger.info('CVM Detector imported')
             elif detector_type == 'LSDD':
-                self.dectectorLSDD = load_detector(path)
+                self.detectorLSDD = load_detector(path)
                 self.logger.info('LSDD Detector imported')
             else:
                 raise ValueError('Invalid Detector Type')
@@ -122,8 +122,8 @@ class UntrainedAutoencoder():
             preds = self.detectorMMD.predict(x=target_data) 
         elif detector_type == 'CVM' and self.detectorCVM is not None:
             preds = self.detectorCVM.predict(x=target_data) 
-        elif detector_type == 'LSDD' and self.dectectorLSDD is not None:
-            preds = self.detectorCVM.predict(x=target_data) 
+        elif detector_type == 'LSDD' and self.detectorLSDD is not None:
+            preds = self.detectorLSDD.predict(x=target_data) 
         else:
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
 

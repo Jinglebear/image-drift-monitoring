@@ -127,9 +127,10 @@ class TrainedAutoencoder():
             self.logger.info('{} Detector initialized'.format(detector_type))
             if(save_dec and detector_name):
                 try:
-                    save_detector(detector,"{}/{}".format(self.config['DETECTOR_DIR_PATH'],detector_name))
+                    save_detector(detector,"{}/{}/".format(self.config['PATHS']['DETECTOR_DIR_PATH'],detector_name))
                 except Exception as e:
                     self.logger.info('Error in init_detector({}:{}): Error Saving Detector'.format(detector_type,detector_name),e)
+
         # except Exception as e:
         #         self.logger.exception('Error in init_detector({}): Error Initializing Detector'.format(detector_type),e)
 
@@ -169,10 +170,10 @@ class TrainedAutoencoder():
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
 
             
-        print('Drift? {}'.format(labels[preds['data']['is_drift']]))
-        print('Feature-wise p-values:')
-        print(preds['data']['p_val'])
-        print('len:{}'.format(len(preds['data']['p_val']))) 
+        # print('Drift? {}'.format(labels[preds['data']['is_drift']]))
+        # print('Feature-wise p-values:')
+        # print(preds['data']['p_val'])
+        # print('len:{}'.format(len(preds['data']['p_val']))) 
             
         return preds
 
