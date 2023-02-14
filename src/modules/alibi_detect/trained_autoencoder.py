@@ -101,6 +101,7 @@ class TrainedAutoencoder():
         ae = nn.Sequential(self.encoder,self.decoder).to(device)
         trainer(ae,nn.MSELoss(),dl,device,learning_rate=LEARNING_RATE,epochs=EPOCHS)
 
+
     def encoder_fn(self,x: np.ndarray) -> np.array:
         x = torch.as_tensor(x).to(device=torch.device('cpu'))
         with torch.no_grad():
