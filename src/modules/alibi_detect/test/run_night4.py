@@ -29,44 +29,44 @@ def main():
 
 
         for j in range(20,120,20):
-                myUAE = UntrainedAutoencoder()
-                myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/KS/globalwheat_UAE_{}_KS'.format(j),detector_type='KS')
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/PCA_n_70/KS/globalwheat_PCA_{}_KS'.format(j),detector_type='KS')
                 for i in range(5,105,5):
                         test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/incremental_drift/globalwheat_test_incremental_{}.npz'.format(i))
                         test_i = test_i_comp['arr_0']
-                        res = myUAE.make_prediction(target_data=test_i, detector_type='KS')
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='KS')
                         df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('globalwheat_uae_ks_results_incremental.xlsx')
+        df_new.to_excel('globalwheat_pca_ks_results_incremental.xlsx')
 
         for j in range(20,120,20):
-                myUAE = UntrainedAutoencoder()
-                myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/CVM/globalwheat_UAE_{}_CVM'.format(j),detector_type='CVM')
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/PCA_n_70/CVM/globalwheat_PCA_{}_CVM'.format(j),detector_type='CVM')
                 for i in range(5,105,5):
                         test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/incremental_drift/globalwheat_test_incremental_{}.npz'.format(i))
                         test_i = test_i_comp['arr_0']
-                        res = myUAE.make_prediction(target_data=test_i, detector_type='CVM')
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='CVM')
                         df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('globalwheat_uae_cvm_results_incremental.xlsx')
+        df_new.to_excel('globalwheat_pca_cvm_results_incremental.xlsx')
 
         for j in range(20,120,20):
-                myUAE = UntrainedAutoencoder()
-                myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/MMD/globalwheat_UAE_{}_MMD'.format(j),detector_type='MMD')
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/PCA_n_70/MMD/globalwheat_PCA_{}_MMD'.format(j),detector_type='MMD')
                 for i in range(5,105,5):
                         test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/incremental_drift/globalwheat_test_incremental_{}.npz'.format(i))
                         test_i = test_i_comp['arr_0']
-                        res = myUAE.make_prediction(target_data=test_i, detector_type='MMD')
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='MMD')
                         df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('globalwheat_uae_mmd_results_incremental.xlsx')
+        df_new.to_excel('globalwheat_pca_mmd_results_incremental.xlsx')
 
         for j in range(20,120,20):
-                myUAE = UntrainedAutoencoder()
-                myUAE.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE/LSDD/globalwheat_UAE_{}_LSDD'.format(j),detector_type='LSDD')
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/PCA_n_70/LSDD/globalwheat_PCA_{}_LSDD'.format(j),detector_type='LSDD')
                 for i in range(5,105,5):
                         test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/drifted_data/incremental_drift/globalwheat_test_incremental_{}.npz'.format(i))
                         test_i = test_i_comp['arr_0']
-                        res = myUAE.make_prediction(target_data=test_i, detector_type='LSDD')
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='LSDD')
                         df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('globalwheat_uae_lsdd_results_incremental.xlsx')
+        df_new.to_excel('globalwheat_pca_lsdd_results_incremental.xlsx')
 
 
 # ======================================================================================
