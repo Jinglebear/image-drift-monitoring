@@ -33,7 +33,7 @@ class TrainedAutoencoder():
         """ detectors """
         self.detectorKS: KSDrift = None
         self.detectorMMD : MMDDrift = None
-        self.dectectorLSDD : LSDDDrift = None
+        self.detectorLSDD : LSDDDrift = None
         self.detectorCVM : CVMDrift = None
 
         """ Autoencoder """
@@ -122,7 +122,7 @@ class TrainedAutoencoder():
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
                 detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
-                self.dectectorLSDD = detector
+                self.detectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')
             self.logger.info('{} Detector initialized'.format(detector_type))
@@ -138,7 +138,7 @@ class TrainedAutoencoder():
 
     # import detector
     def import_detector(self,path:str, detector_type: str):
-        try:
+        # try:
             if detector_type == 'KS':
                 self.detectorKS = load_detector(path) 
                 self.logger.info('KS Detector imported')
@@ -149,12 +149,12 @@ class TrainedAutoencoder():
                 self.detectorCVM = load_detector(path)
                 self.logger.info('CVM Detector imported')
             elif detector_type == 'LSDD':
-                self.dectectorLSDD = load_detector(path)
+                self.detectorLSDD = load_detector(path)
                 self.logger.info('LSDD Detector imported')
             else:
                 raise ValueError('Invalid Detector Type')
-        except Exception as e:
-                self.logger.exception('Error in import_KS_detector(): Error Importing Detector',e)
+        # except Exception as e:
+        #         self.logger.exception('Error in import_KS_detector(): Error Importing Detector',e)
                  
     # make prediction
     def make_prediction(self,target_data:np.ndarray, detector_type :str) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
@@ -165,8 +165,8 @@ class TrainedAutoencoder():
             preds = self.detectorMMD.predict(x=target_data) 
         elif detector_type == 'CVM' and self.detectorCVM is not None:
             preds = self.detectorCVM.predict(x=target_data) 
-        elif detector_type == 'LSDD' and self.dectectorLSDD is not None:
-            preds = self.detectorCVM.predict(x=target_data) 
+        elif detector_type == 'LSDD' and self.detectorLSDD is not None:
+            preds = self.detectorLSDD.predict(x=target_data) 
         else:
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
 
