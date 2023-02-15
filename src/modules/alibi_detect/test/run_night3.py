@@ -15,43 +15,43 @@ import json
 import torch
 import pandas as pd
 def main():
-        data = {
-        "100":["{}".format(i) for i in range(1,21,1)],
-        "80" : ["{}".format(i) for i in range(1,21,1)],
-        "60" : ["{}".format(i) for i in range(1,21,1)],
-        "40" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)]
-        }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
+        # data = {
+        # "100":["{}".format(i) for i in range(1,21,1)],
+        # "80" : ["{}".format(i) for i in range(1,21,1)],
+        # "60" : ["{}".format(i) for i in range(1,21,1)],
+        # "40" : ["{}".format(i) for i in range(1,21,1)],
+        # "20" : ["{}".format(i) for i in range(1,21,1)]
+        # }
+        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
         
-        for j in range(20,120,20):
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/KS/iwildcam_PCA_{}_KS'.format(j),detector_type='KS')
-                for i in range(5,105,5):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='KS')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('iwildcam_pca_ks_results_incremental.xlsx')
+        # for j in range(20,120,20):
+        #         myPCA = PrincipalComponentAnalysis()
+        #         myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/KS/iwildcam_PCA_{}_KS'.format(j),detector_type='KS')
+        #         for i in range(5,105,5):
+        #                 test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
+        #                 test_i = test_i_comp['arr_0']
+        #                 res = myPCA.make_prediction(target_data=test_i, detector_type='KS')
+        #                 df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        # df_new.to_excel('iwildcam_pca_ks_results_incremental.xlsx')
 
-        data = {
-        "100":["{}".format(i) for i in range(1,21,1)],
-        "80" : ["{}".format(i) for i in range(1,21,1)],
-        "60" : ["{}".format(i) for i in range(1,21,1)],
-        "40" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)]
-        }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
+        # data = {
+        # "100":["{}".format(i) for i in range(1,21,1)],
+        # "80" : ["{}".format(i) for i in range(1,21,1)],
+        # "60" : ["{}".format(i) for i in range(1,21,1)],
+        # "40" : ["{}".format(i) for i in range(1,21,1)],
+        # "20" : ["{}".format(i) for i in range(1,21,1)]
+        # }
+        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
         
-        for j in range(20,120,20):
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/CVM/iwildcam_PCA_{}_CVM'.format(j),detector_type='CVM')
-                for i in range(5,105,5):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='CVM')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('iwildcam_pca_cvm_results_incremental.xlsx')
+        # for j in range(20,120,20):
+        #         myPCA = PrincipalComponentAnalysis()
+        #         myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/CVM/iwildcam_PCA_{}_CVM'.format(j),detector_type='CVM')
+        #         for i in range(5,105,5):
+        #                 test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
+        #                 test_i = test_i_comp['arr_0']
+        #                 res = myPCA.make_prediction(target_data=test_i, detector_type='CVM')
+        #                 df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        # df_new.to_excel('iwildcam_pca_cvm_results_incremental.xlsx')
 
 
         data = {
@@ -59,7 +59,7 @@ def main():
         "40" : ["{}".format(i) for i in range(1,21,1)],
         "20" : ["{}".format(i) for i in range(1,21,1)],
         }
-        df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(5,105,5)])
+        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
         
         for j in [20,40,60]:
                 myPCA = PrincipalComponentAnalysis()
