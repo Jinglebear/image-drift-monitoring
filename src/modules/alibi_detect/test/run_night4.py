@@ -16,28 +16,86 @@ import json
 import pandas as pd
 import torch
 def main():
-        with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
-                drift_detection_config = json.load(config_file)
+        
 
-        for i in range(5,105,5):
-                if(i == 100):
-                        rxrx1_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/rxrx1_train_ds.npz')
-                else: 
-                        rxrx1_train_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/rxrx1_train_{}_ds.npz'.format(i))
-                rxrx1_train = rxrx1_train_comp['arr_0']
+        data = {
+        "100":["{}".format(i) for i in range(1,21,1)],
+        "80" : ["{}".format(i) for i in range(1,21,1)],
+        "60" : ["{}".format(i) for i in range(1,21,1)],
+        "40" : ["{}".format(i) for i in range(1,21,1)],
+        "20" : ["{}".format(i) for i in range(1,21,1)]
+        }
+        df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
 
-                rxrx1_train_0_50   = rxrx1_train[:int(len(rxrx1_train)*0.5)]
-                rxrx1_train_50_100 = rxrx1_train[ int(len(rxrx1_train)*0.5):]
+        for j in range(20,120,20):
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_50/KS/rxrx1_PCA_{}_KS'.format(j),detector_type='KS')
+                for i in range(10,210,10):
+                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/sudden_drift/rxrx1_test_{}.npz'.format(i))
+                        test_i = test_i_comp['arr_0']
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='KS')
+                        df_new.loc['{} OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('rxrx1_pca_ks_results_sudden.xlsx')
 
-                myPCA = PrincipalComponentAnalysis(drift_detection_config)
-                myPCA.init_pca(x_ref=rxrx1_train_0_50)
-                myPCA.init_detector(detector_type='LSDD',reference_data=rxrx1_train_50_100,detector_name='rxrx1_PCA_{}_LSDD'.format(i),save_dec=True)
 
-                rxrx1_train_comp = None
-                rxrx1_train = None
-                rxrx1_train_0_50 = None
-                rxrx1_train_50_100 =None
-                myPCA = None
+        data = {
+        "100":["{}".format(i) for i in range(1,21,1)],
+        "80" : ["{}".format(i) for i in range(1,21,1)],
+        "60" : ["{}".format(i) for i in range(1,21,1)],
+        "40" : ["{}".format(i) for i in range(1,21,1)],
+        "20" : ["{}".format(i) for i in range(1,21,1)]
+        }
+        df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
+
+        for j in range(20,120,20):
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_50/CVM/rxrx1_PCA_{}_CVM'.format(j),detector_type='CVM')
+                for i in range(10,210,10):
+                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/sudden_drift/rxrx1_test_{}.npz'.format(i))
+                        test_i = test_i_comp['arr_0']
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='CVM')
+                        df_new.loc['{} OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('rxrx1_pca_cvm_results_sudden.xlsx')
+
+        data = {
+        "100":["{}".format(i) for i in range(1,21,1)],
+        "80" : ["{}".format(i) for i in range(1,21,1)],
+        "60" : ["{}".format(i) for i in range(1,21,1)],
+        "40" : ["{}".format(i) for i in range(1,21,1)],
+        "20" : ["{}".format(i) for i in range(1,21,1)]
+        }
+        df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
+
+        for j in range(20,120,20):
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_50/MMD/rxrx1_PCA_{}_MMD'.format(j),detector_type='MMD')
+                for i in range(10,210,10):
+                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/sudden_drift/rxrx1_test_{}.npz'.format(i))
+                        test_i = test_i_comp['arr_0']
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='MMD')
+                        df_new.loc['{} OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('rxrx1_pca_mmd_results_sudden.xlsx')
+
+
+        data = {
+        "100":["{}".format(i) for i in range(1,21,1)],
+        "80" : ["{}".format(i) for i in range(1,21,1)],
+        "60" : ["{}".format(i) for i in range(1,21,1)],
+        "40" : ["{}".format(i) for i in range(1,21,1)],
+        "20" : ["{}".format(i) for i in range(1,21,1)]
+        }
+        df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
+
+        for j in range(20,120,20):
+                myPCA = PrincipalComponentAnalysis()
+                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_50/LSDD/rxrx1_PCA_{}_LSDD'.format(j),detector_type='LSDD')
+                for i in range(10,210,10):
+                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/sudden_drift/rxrx1_test_{}.npz'.format(i))
+                        test_i = test_i_comp['arr_0']
+                        res = myPCA.make_prediction(target_data=test_i, detector_type='LSDD')
+                        df_new.loc['{} OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
+        df_new.to_excel('rxrx1_pca_lsdd_results_sudden.xlsx')
+
 # ======================================================================================
 # call
 if __name__ == "__main__":
