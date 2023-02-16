@@ -14,80 +14,149 @@ from torch.utils.data import TensorDataset, DataLoader
 import json 
 import torch
 import pandas as pd
+from timeit import default_timer as timer
+import time
 def main():
-        # data = {
-        # "100":["{}".format(i) for i in range(1,21,1)],
-        # "80" : ["{}".format(i) for i in range(1,21,1)],
-        # "60" : ["{}".format(i) for i in range(1,21,1)],
-        # "40" : ["{}".format(i) for i in range(1,21,1)],
-        # "20" : ["{}".format(i) for i in range(1,21,1)]
-        # }
-        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
-        
-        # for j in range(20,120,20):
-        #         myPCA = PrincipalComponentAnalysis()
-        #         myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/KS/iwildcam_PCA_{}_KS'.format(j),detector_type='KS')
-        #         for i in range(5,105,5):
-        #                 test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
-        #                 test_i = test_i_comp['arr_0']
-        #                 res = myPCA.make_prediction(target_data=test_i, detector_type='KS')
-        #                 df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        # df_new.to_excel('iwildcam_pca_ks_results_incremental.xlsx')
 
-        # data = {
-        # "100":["{}".format(i) for i in range(1,21,1)],
-        # "80" : ["{}".format(i) for i in range(1,21,1)],
-        # "60" : ["{}".format(i) for i in range(1,21,1)],
-        # "40" : ["{}".format(i) for i in range(1,21,1)],
-        # "20" : ["{}".format(i) for i in range(1,21,1)]
-        # }
-        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
-        
-        # for j in range(20,120,20):
-        #         myPCA = PrincipalComponentAnalysis()
-        #         myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/CVM/iwildcam_PCA_{}_CVM'.format(j),detector_type='CVM')
-        #         for i in range(5,105,5):
-        #                 test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
-        #                 test_i = test_i_comp['arr_0']
-        #                 res = myPCA.make_prediction(target_data=test_i, detector_type='CVM')
-        #                 df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        # df_new.to_excel('iwildcam_pca_cvm_results_incremental.xlsx')
+        time.sleep(4000)
+        # globalwheat
+        with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+                drift_detection_config = json.load(config_file)
 
+        globalwheat_train_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/globalwheat_v1.1/96_by_96_transform/globalwheat_96_train_ds.npz')
+        globalwheat_train_i = globalwheat_train_i_comp['arr_0']
 
-        data = {
-        "60":["{}".format(i) for i in range(1,21,1)],
-        "40" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)],
-        }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
-        
-        for j in [20,40,60]:
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/MMD/iwildcam_PCA_{}_MMD'.format(j),detector_type='MMD')
-                for i in range(5,105,5):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='MMD')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('iwildcam_pca_mmd_results_incremental.xlsx')
+        size_train = globalwheat_train_i.shape[0]
+
+        if(size_train > 5000):
+                print('over 5000')
+                np.random.shuffle(globalwheat_train_i)
+        else:
+                np.random.shuffle(globalwheat_train_i)
+                # do 50 50 split
+                globalwheat_train_i_0_50 =  globalwheat_train_i[:int(globalwheat_train_i.shape[0]*0.5)]
+                size_training_set = globalwheat_train_i_0_50.shape[0]
+
+                print(size_training_set)
+                
+                globalwheat_train_i_50_100 = globalwheat_train_i[int(globalwheat_train_i.shape[0]*0.5):]
+                size_remaining = globalwheat_train_i_50_100.shape[0]
+
+                print(size_remaining)
+
+                globalwheat_train_i_0_50 = torch.as_tensor(globalwheat_train_i_0_50)
+                
+                globalwheat_train_i_0_50_dl = DataLoader(TensorDataset(globalwheat_train_i_0_50,globalwheat_train_i_0_50),drift_detection_config['TAE']['BATCH_SIZE'],shuffle=True)
+                
+                t = timer() # setup timer
+                myTAE = TrainedAutoencoder(drift_detection_config)
+                myTAE.init_default_pt_autoencoder(globalwheat_train_i_0_50_dl)
+                dt = timer() - t
+                with open('/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE/track_time_tae_globalwheat_trainingAE.txt','w') as f:
+                        f.write(str(dt))
+                t2 = timer()
+                for i in ['KS','CVM','MMD','LSDD']:
+                        myTAE.init_detector(detector_type='{}'.format(i),reference_data=globalwheat_train_i_50_100,detector_name='globalwheat_TAE_{}_{}_{}'.format(size_training_set,size_remaining,i),save_dec=True)
+                        dt2 = timer() - t2
+                        with open('/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE/track_time_globalwheat_{}_init_50_p_train.txt'.format(i),'w') as f:
+                                f.write(str(dt2))
 
 
-        data = {
-        "60":["{}".format(i) for i in range(1,21,1)],
-        "40" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)]
-        }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
-        
-        for j in [20,40,60]:
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/PCA_n_50/LSDD/iwildcam_PCA_{}_LSDD'.format(j),detector_type='LSDD')
-                for i in range(5,105,5):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/iwildcam_test_incremental_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='LSDD')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('iwildcam_pca_lsdd_results_incremental.xlsx')
+
+        globalwheat_train_i_comp = None
+        globalwheat_train_i = None
+        globalwheat_train_i_0_50 = None 
+        globalwheat_train_i_50_100 = None
+        globalwheat_train_i_dl = None
+        myTAE = None
+       
+
+        rxrx1_train_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/96_by_96_transform/rxrx1_96_train_ds.npz')
+        rxrx1_train_i = rxrx1_train_i_comp['arr_0']
+
+        size_train = rxrx1_train_i.shape[0]
+
+        if(size_train > 5000):
+                print('over 5000')
+                np.random.shuffle(rxrx1_train_i)
+                
+                # do 50 50 split
+                rxrx1_train_i_0_50 =  rxrx1_train_i[:5000]
+                size_training_set = rxrx1_train_i_0_50.shape[0]
+
+                print(size_training_set)
+                
+                rxrx1_train_i_50_100 = rxrx1_train_i[5000:]
+                size_remaining = rxrx1_train_i_50_100.shape[0]
+
+                print(size_remaining)
+
+                rxrx1_train_i_0_50 = torch.as_tensor(rxrx1_train_i_0_50)
+                
+                rxrx1_train_i_0_50_dl = DataLoader(TensorDataset(rxrx1_train_i_0_50,rxrx1_train_i_0_50),drift_detection_config['TAE']['BATCH_SIZE'],shuffle=True)
+                t = timer() # setup timer
+                myTAE = TrainedAutoencoder(drift_detection_config)
+                myTAE.init_default_pt_autoencoder(rxrx1_train_i_0_50_dl)
+                dt = timer() - t
+                with open('/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE/track_time_tae_rxrx1_trainingAE.txt','w') as f:
+                        f.write(str(dt))
+                for i in ['KS','CVM','MMD','LSDD']:
+                        t2 = timer()
+                        myTAE.init_detector(detector_type='{}'.format(i),reference_data=rxrx1_train_i_50_100,detector_name='rxrx1_TAE_{}_{}_{}'.format(size_training_set,size_remaining,i),save_dec=True)
+                        dt2 = timer()-t2
+                        with open('/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE/track_time_rxrx1_{}_init_50_p_train.txt'.format(i),'w') as f:
+                                f.write(str(dt2))
+
+
+
+        rxrx1_train_i_comp = None
+        rxrx1_train_i = None
+        rxrx1_train_i_0_50 = None 
+        rxrx1_train_i_50_100 = None
+        rxrx1_train_i_dl = None
+        myTAE = None
+
+        iwildcam_train_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/96_by_96_transform/iwildcam_96_train_ds.npz')
+        iwildcam_train_i = iwildcam_train_i_comp['arr_0']
+
+        size_train = iwildcam_train_i.shape[0]
+
+        if(size_train > 5000):
+                print('over 5000')
+                np.random.shuffle(iwildcam_train_i)
+                # do 50 50 split
+                iwildcam_train_i_0_50 =  iwildcam_train_i[:5000]
+                size_training_set = iwildcam_train_i_0_50.shape[0]
+
+                print(size_training_set)
+                
+                iwildcam_train_i_50_100 = iwildcam_train_i[5000:]
+                size_remaining = iwildcam_train_i_50_100.shape[0]
+
+                print(size_remaining)
+
+                iwildcam_train_i_0_50 = torch.as_tensor(iwildcam_train_i_0_50)
+                
+                iwildcam_train_i_0_50_dl = DataLoader(TensorDataset(iwildcam_train_i_0_50,iwildcam_train_i_0_50),drift_detection_config['TAE']['BATCH_SIZE'],shuffle=True)
+                t = timer() # setup timer
+                myTAE = TrainedAutoencoder(drift_detection_config)
+                myTAE.init_default_pt_autoencoder(iwildcam_train_i_0_50_dl)
+                with open('/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE/track_time_tae_iwildcam_trainingAE.txt','w') as f:
+                        f.write(str(dt))
+                for i in ['KS','CVM','MMD','LSDD']:
+                        t2 = timer()
+                        myTAE.init_detector(detector_type='{}'.format(i),reference_data=iwildcam_train_i_50_100,detector_name='iwildcam_TAE_{}_{}_{}'.format(size_training_set,size_remaining,i),save_dec=True)
+                        dt2 = timer - t2
+                        with open('/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/TAE/track_time_iwildcam_{}_init_50_p_train.txt'.format(i),'w') as f:
+                                f.write(str(dt2))
+
+
+        iwildcam_train_i_comp = None
+        iwildcam_train_i = None
+        iwildcam_train_i_0_50 = None 
+        iwildcam_train_i_50_100 = None
+        iwildcam_train_i_dl = None
+        myTAE = None
 
 
 # ======================================================================================

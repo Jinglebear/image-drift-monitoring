@@ -134,20 +134,3 @@ class UntrainedAutoencoder():
         # print('len:{}'.format(int(len(preds['data']['p_val'])))) 
             
         return preds
-
-    # TODO: install required package / delete this 
-    # pytorch encoder expects images in (channels, height, width) format
-    # def init_default_pt_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
-    #     torch.manual_seed(0)
-    #     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    #     encoder_net = nn.Sequential(
-    #         nn.Conv2d(in_channels=input_shape[0],out_channels=input_shape[1]*2,kernel_size=4,stride=2,padding=0),
-    #         nn.ReLU(),
-    #         nn.Conv2d(in_channels=input_shape[1]*2,out_channels=input_shape[1]*4,kernel_size=4,stride=2,padding=0),
-    #         nn.ReLU(),
-    #         nn.Conv2d(in_channels=input_shape[1]*4,out_channels=input_shape[1]*16,kernel_size=4,stride=2,padding=0),
-    #         nn.ReLU(),
-    #         nn.Flatten(),
-    #         nn.Linear(in_features=input_shape[1]*64,out_features=encoding_dim)
-    #     ).to(device=device).eval()
-    #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
