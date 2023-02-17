@@ -41,30 +41,30 @@ class TrainedAutoencoder():
         self.decoder = None
 
     # tensorflow encoder 
-    def init_default_tf_autoencoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
-        tf.random.set_seed(0) # random
-        # self.encoding_dim = encoding_dim # check later
-        encoder_net = tf.keras.Sequential(
-            [
-                InputLayer(input_shape=input_shape),
-                Conv2D(encoding_dim*2,4,strides=2,padding='same',activation=tf.nn.relu),
-                Conv2D(encoding_dim*4,4,strides=2,padding='same',activation=tf.nn.relu),
-                Conv2D(encoding_dim*16,4,strides=2,padding='same',activation=tf.nn.relu),
-                Flatten(),
-                Dense(encoding_dim)
-            ]
-        )
-        decoder_net = tf.keras.Sequential(
-            [
-                InputLayer(input_shape=input_shape),
-                Dense(encoding_dim),
-                Reshape(),
-                Conv2DTranspose(filters=encoding_dim*16,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
-                Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
-                Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
-            ]
-        )
-        return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
+    # def init_default_tf_autoencoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
+    #     tf.random.set_seed(0) # random
+    #     # self.encoding_dim = encoding_dim # check later
+    #     encoder_net = tf.keras.Sequential(
+    #         [
+    #             InputLayer(input_shape=input_shape),
+    #             Conv2D(encoding_dim*2,4,strides=2,padding='same',activation=tf.nn.relu),
+    #             Conv2D(encoding_dim*4,4,strides=2,padding='same',activation=tf.nn.relu),
+    #             Conv2D(encoding_dim*16,4,strides=2,padding='same',activation=tf.nn.relu),
+    #             Flatten(),
+    #             Dense(encoding_dim)
+    #         ]
+    #     )
+    #     decoder_net = tf.keras.Sequential(
+    #         [
+    #             InputLayer(input_shape=input_shape),
+    #             Dense(encoding_dim),
+    #             Reshape(),
+    #             Conv2DTranspose(filters=encoding_dim*16,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
+    #             Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
+    #             Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
+    #         ]
+    #     )
+    #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
     def init_default_pt_autoencoder(self,dl : DataLoader):
         ENC_DIM = self.config['TAE']['ENC_DIM']
@@ -115,13 +115,13 @@ class TrainedAutoencoder():
                 detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorKS = detector
             elif detector_type == 'MMD':
-                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
+                detector = MMDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],backend='pytorch',preprocess_fn=self.encoder_fn)
                 self.detectorMMD = detector
             elif detector_type == 'CVM':
                 detector = CVMDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorCVM = detector
             elif detector_type == 'LSDD':
-                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
+                detector = LSDDDrift(x_ref=reference_data,p_val=self.config['GENERAL']['P_VAL'],backend='pytorch',preprocess_fn=self.encoder_fn)
                 self.detectorLSDD = detector
             else:
                 raise ValueError('Invalid Detector Type')
