@@ -12,79 +12,269 @@ import numpy as np
 from modules.alibi_detect.trained_autoencoder import TrainedAutoencoder
 from torch.utils.data import TensorDataset, DataLoader
 import json 
-
+from timeit import default_timer as timer
 import pandas as pd
 import torch
 def main():
+
+        """ iWildcam """
+        # DATASET_NAME = 'iwildcam'
         
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(1,21,1):
+        #                 test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 10:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{}'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
+
+        DATASET_NAME = 'rxrx1'
+        
+        with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+                drift_detection_config = json.load(config_file)
 
         data = {
-        "100":["{}".format(i) for i in range(1,21,1)],
-        "80" : ["{}".format(i) for i in range(1,21,1)],
-        "60" : ["{}".format(i) for i in range(1,21,1)],
-        "40" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)],
+        "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
         }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(10,210,10)])
+        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
+
+        for i in ['KS','CVM','MMD','LSDD']:
+                t = timer()
+                myTAE = TrainedAutoencoder()
+                myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+                for j in range(5,105,5):
+                        test_j_comp = np.load('{}/{}_test_incremental_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+                        test_j = test_j_comp['arr_0']
+                        if j == 10:
+                                res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+                                dt = timer() - t
+                                with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+                                        f.write(str(dt))
+                        else:
+                                res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+                        df_new.loc['{}% OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+                df_new.to_excel('{}_tae_{}_results_incremental.xlsx'.format(DATASET_NAME,i))
 
 
-        for j in range(20,120,20):
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/PCA_n_50/KS/camelyon_PCA_{}_KS'.format(j),detector_type='KS')
-                for i in range(10,210,10):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='KS')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('camelyon_pca_ks_results_sudden.xlsx')
+        # DATASET_NAME = 'rxrx1'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
 
-        for j in range(20,120,20):
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/PCA_n_50/CVM/camelyon_PCA_{}_CVM'.format(j),detector_type='CVM')
-                for i in range(10,210,10):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='CVM')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('camelyon_pca_cvm_results_sudden.xlsx')
+        # data = {
+        # "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
 
-        data = {
-        "30" : ["{}".format(i) for i in range(1,21,1)],
-        "25" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)],
-        "15" : ["{}".format(i) for i in range(1,21,1)],
-        "10" : ["{}".format(i) for i in range(1,21,1)],
-        "5" : ["{}".format(i) for i in range(1,21,1)],
-        }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(10,210,10)])
-        for j in range(5,35,5):
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/PCA_n_50/MMD/camelyon_PCA_{}_MMD'.format(j),detector_type='MMD')
-                for i in range(10,210,10):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='MMD')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('camelyon_pca_mmd_results_sudden.xlsx')
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(10,210,10):
+        #                 test_j_comp = np.load('{}/{}_test_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 10:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{} OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_sudden.xlsx'.format(DATASET_NAME,i))
 
-        data = {
-        "30" : ["{}".format(i) for i in range(1,21,1)],
-        "25" : ["{}".format(i) for i in range(1,21,1)],
-        "20" : ["{}".format(i) for i in range(1,21,1)],
-        "15" : ["{}".format(i) for i in range(1,21,1)],
-        "10" : ["{}".format(i) for i in range(1,21,1)],
-        "5" : ["{}".format(i) for i in range(1,21,1)],
-        }
-        df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(10,210,10)])
-        for j in range(5,35,5):
-                myPCA = PrincipalComponentAnalysis()
-                myPCA.import_detector(path='/home/ubuntu/image-drift-monitoring/config/detectors/Camelyon/PCA_n_50/LSDD/camelyon_PCA_{}_LSDD'.format(j),detector_type='LSDD')
-                for i in range(10,210,10):
-                        test_i_comp = np.load('/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/sudden_drift/camelyon_test_{}.npz'.format(i))
-                        test_i = test_i_comp['arr_0']
-                        res = myPCA.make_prediction(target_data=test_i, detector_type='LSDD')
-                        df_new.loc['{}% OOD Bilder'.format(i)]['{}'.format(j)] = res['data']['is_drift']
-        df_new.to_excel('camelyon_pca_lsdd_results_sudden.xlsx')
+
+
+
+
+
+
+        """ GLOBALWHEAT """
+        # DATASET_NAME = 'globalwheat'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(1,21,1)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(1,21,1):
+        #                 test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 10:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{}% OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
+
+        # DATASET_NAME = 'globalwheat'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(5,105,5):
+        #                 test_j_comp = np.load('{}/{}_test_incremental_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 10:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{}% OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_incremental.xlsx'.format(DATASET_NAME,i))
+
+        # DATASET_NAME = 'globalwheat'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(10,210,10):
+        #                 test_j_comp = np.load('{}/{}_test_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 10:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{} OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_sudden.xlsx'.format(DATASET_NAME,i))
+
+
+        """ CAMELYON TAE RESULTS """
+        """ CAMELYON RECURRING """
+        # DATASET_NAME = 'camelyon'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i+330) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(1,21,1):
+        #                 test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 5:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{}'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
+        """ CAMELYON INCREMENTAL """
+        # DATASET_NAME = 'camelyon'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i+330) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{}% OOD Bilder".format(i) for i in range(5,105,5)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(5,105,5):
+        #                 test_j_comp = np.load('{}/{}_test_incremental_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 5:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{}% OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_incremental.xlsx'.format(DATASET_NAME,i))
+
+
+        """ CAMELYON SUDDEN """
+        # DATASET_NAME = 'camelyon'
+        
+        # with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
+        #         drift_detection_config = json.load(config_file)
+
+        # data = {
+        # "50% train 50% init":["{}".format(i) for i in range(1,21,1)],
+        # }
+        # df_new = pd.DataFrame(data,index=["{} OOD Bilder".format(i) for i in range(10,210,10)])
+
+        # for i in ['KS','CVM','MMD','LSDD']:
+        #         t = timer()
+        #         myTAE = TrainedAutoencoder()
+        #         myTAE.import_detector(path='{}/{}_tae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+        #         for j in range(10,210,10):
+        #                 test_j_comp = np.load('{}/{}_test_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+        #                 test_j = test_j_comp['arr_0']
+        #                 if j == 10:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                         dt = timer() - t
+        #                         with open('{}/track_time_tae_{}_execute_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+        #                                 f.write(str(dt))
+        #                 else:
+        #                         res = myTAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+        #                 df_new.loc['{} OOD Bilder'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+        #         df_new.to_excel('{}_tae_{}_results_sudden.xlsx'.format(DATASET_NAME,i))
+
+        
 
 
 # ======================================================================================

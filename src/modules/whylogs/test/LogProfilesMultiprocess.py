@@ -15,13 +15,13 @@ import torch
 import torchvision
 import PIL
 
-# import sys
-# sys.path.append('/home/ubuntu/image-drift-monitoring/src')
-from whylogs_logger import Whylogs_Logger
+import sys
+sys.path.append('/home/ubuntu/image-drift-monitoring')
+from src.modules.whylogs.whylogs_logger import Whylogs_Logger
 def main():
 
     CAMELYON_ROOT_PATH = '{}/data/camelyon17_v1.0'.format(os.getcwd())
-    GLOBALWHEAT_ROOT_PATH = '{}/data/global_wheat_v1.1'.format(os.getcwd())
+    GLOBALWHEAT_ROOT_PATH = '{}/data/globalwheat_v1.1'.format(os.getcwd())
     IWILDCAM_ROOT_PATH = '{}/data/iwildcam_v2.0'.format(os.getcwd())
     POVERTY_ROOT_PATH =  '{}/data/poverty_v1.1'.format(os.getcwd())
     RXRX1_ROOT_PATH = '/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0'
@@ -39,14 +39,15 @@ def main():
     """ WILDS IWILDCAM DATASET """
     # dataset = get_dataset(dataset="iwildcam", download=False)
     """ WILDS RXRX1 DATASET """
-    dataset = get_dataset(dataset="rxrx1",download=False)
+    # dataset = get_dataset(dataset="rxrx1",download=False)
     
+
 
 
     """ GET SPLITS """
     # Get the training set (in distribution)
 
-    train_data = dataset.get_subset("train")
+    # train_data = dataset.get_subset("train")
 
     # Get the validation set (in distribution)
 
@@ -60,16 +61,16 @@ def main():
     
 
     """ LOG TRAIN SPLIT TO BINARY USING MULTIPROCESSING"""
-    for i in range(5,105,5):    
-        log_profile_to_bin_multiple_processes(
-            w_logger=w_logger,
-            percentage=i,
-            indices=train_data.indices,
-            dataset=train_data.dataset,
-            num_processes=30,
-            split='train',
-            dataset_name='rxrx1',
-            dataset_dir_path=RXRX1_ROOT_PATH)
+    # for i in range(5,105,5):    
+    #     log_profile_to_bin_multiple_processes(
+    #         w_logger=w_logger,
+    #         percentage=i,
+    #         indices=train_data.indices,
+    #         dataset=train_data.dataset,
+    #         num_processes=30,
+    #         split='train',
+    #         dataset_name='rxrx1',
+    #         dataset_dir_path=RXRX1_ROOT_PATH)
 
     """ LOG VAL SPLIT TO BINARY USING MULTIPROCESSING"""
     # for j in range(5,105,5):    

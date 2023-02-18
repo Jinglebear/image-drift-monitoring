@@ -1,8 +1,8 @@
 {
     "VERSION" : 0.1,
     "PATHS" : {
-        "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/GlobalWheat/UAE_PerformanceTest"
+        "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/incremental_drift/96_by_96_transform",
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/TAE"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
