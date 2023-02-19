@@ -23,4 +23,4 @@ nohup.out
 *.h5
 *.toml
 *.dill
-results/
+results_old/
