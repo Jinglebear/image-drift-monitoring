@@ -109,11 +109,5 @@ class PrincipalComponentAnalysis():
             preds = self.detectorLSDD.predict(x=target_data) 
         else:
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
-
-            
-        # print('Drift? {}'.format(labels[preds['data']['is_drift']]))
-        # print('Feature-wise p-values:')
-        # print(preds['data']['p_val'])
-        # print('len:{}'.format(len(preds['data']['p_val']))) 
             
         return preds

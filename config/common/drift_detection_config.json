@@ -1,15 +1,15 @@
 {
     "VERSION" : 0.1,
     "PATHS" : {
-        "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/incremental_drift/96_by_96_transform",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/TAE"
+        "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/recurring_drift/96_by_96_transform",
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_32"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
         "WINDOW_SIZE" : 200,
         "AVAILABLE_DETECTOR_TYPES" : ["KS", "CVM", "MMD", "LSDD"]
     },
-    "PCA" : {"PCA_N_COMPONENTS" : 50},
+    "PCA" : {"PCA_N_COMPONENTS" : 32},
     "TAE" : {"ENC_DIM":32, "BATCH_SIZE":32, "EPOCHS":15, "LEARNING_RATE":1e-3},
-    "UAE" : {"BATCH_SIZE" : 256}
+    "UAE" : {"BATCH_SIZE" : 256, "ENC_DIM":32}
 }
