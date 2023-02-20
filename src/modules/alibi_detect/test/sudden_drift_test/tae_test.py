@@ -17,10 +17,13 @@ import pandas as pd
 import torch
 def main():
         """ RECURRING """
-        DATASET_NAME = 'camelyon'
+        DATASET_NAME = 'rxrx1'
 
         with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
                 drift_detection_config = json.load(config_file)
+
+        drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"]='/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/TAE'
+        drift_detection_config["PATHS"]["DATA_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/recurring_drift/96_by_96_transform'
 
         data = {
         "50% train 50% init":["{}".format(i+330) for i in range(1,21,1)],

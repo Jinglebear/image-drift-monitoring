@@ -39,36 +39,37 @@ def main():
                         drift_detection_config["PATHS"]["DATA_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/data/camelyon17_v1.0/drifted_data/recurring_drift'
 
 
-                """ RECURRING """
-                data = {
-                "50% train 50% init":["{}".format(i+333) for i in range(1,21,1)],
-                }
-                df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
+                if name != 'rxrx1':
+                        """ RECURRING """
+                        data = {
+                        "50% train 50% init":["{}".format(i+333) for i in range(1,21,1)],
+                        }
+                        df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
 
-                for i in ['KS','CVM','MMD','LSDD']:
-                        t = timer()
-                        myUAE = UntrainedAutoencoder()
-                        myUAE.import_detector(path='{}/{}_uae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
-                        for j in range(1,21,1):
-                                test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
-                                test_j = test_j_comp['arr_0']
-                                if j == 10:
-                                        res = myUAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
-                                        dt = timer() - t
-                                        with open('{}/track_time_UAE_{}_run_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
-                                                f.write(str(dt))
-                                else:
-                                        res = myUAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
-                                df_new.loc['{}'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
-                                
-                                
-                        df_new.to_excel('{}_uae_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
+                        for i in ['KS','CVM','MMD','LSDD']:
+                                t = timer()
+                                myUAE = UntrainedAutoencoder()
+                                myUAE.import_detector(path='{}/{}_uae_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+                                for j in range(1,21,1):
+                                        test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+                                        test_j = test_j_comp['arr_0']
+                                        if j == 10:
+                                                res = myUAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+                                                dt = timer() - t
+                                                with open('{}/track_time_UAE_{}_run_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+                                                        f.write(str(dt))
+                                        else:
+                                                res = myUAE.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+                                        df_new.loc['{}'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+                                        
+                                        
+                                df_new.to_excel('{}_uae_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
 
                 """ INCREMENTAL """
 
                 if name == 'rxrx1':
                         drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/UAE_n_32'
-                        drift_detection_config["PATHS"]["DATA_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/sudden_drift/96_by_96_transform'
+                        drift_detection_config["PATHS"]["DATA_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/incremental_drift/96_by_96_transform'
                 if name == 'iwildcam':
                         drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/UAE_n_32'
                         drift_detection_config["PATHS"]["DATA_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/incremental_drift/96_by_96_transform'
