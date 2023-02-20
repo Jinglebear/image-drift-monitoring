@@ -20,7 +20,8 @@ def main():
         with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
                 drift_detection_config = json.load(config_file)
 
-        for name in ['iwildcam','globalwheat','camelyon']:
+        for name in ['camelyon']:
+        # for name in ['rxrx1','iwildcam','globalwheat','camelyon']:
 
                 
                 if name == 'rxrx1':
@@ -45,7 +46,8 @@ def main():
                 }
                 df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
 
-                for i in ['KS','CVM','MMD','LSDD']:
+                for i in ['LSDD']:
+                # for i in ['KS','CVM','MMD','LSDD']:
                         t = timer()
                         myPCA = PrincipalComponentAnalysis()
                         myPCA.import_detector(path='{}/{}_pca_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
