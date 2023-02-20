@@ -2,15 +2,16 @@
 import json
 import logging
 import os
-from datetime import datetime
-from typing import Any, Dict, Optional,List
-import pytz
+import pathlib
 import random
+from datetime import datetime
+from typing import List
+
 import pandas as pd
+import pytz
 from PIL import Image
 from PIL.Image import Image as PIL_IMAGE
 from progressbar import progressbar
-import pathlib
 
 """ whylogs imports  """
 
@@ -19,9 +20,8 @@ from whylogs.extras.image_metric import log_image
 from whylogs.migration import uncompound
 from whylogs.viz import NotebookProfileVisualizer
 from whylogs.viz.utils.profile_viz_calculations import (
-    OverallStats, add_feature_statistics, add_overall_statistics,
-    frequent_items_from_view, generate_profile_summary, generate_summaries,
-    histogram_from_view)
+    generate_profile_summary, generate_summaries)
+
 
 class Whylogs_Logger():
     def __init__(self, config = None) -> None:

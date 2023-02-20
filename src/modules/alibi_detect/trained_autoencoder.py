@@ -1,20 +1,16 @@
 # MISC imports
-import numpy as np
 import logging
-from typing import Dict, Tuple, Union
-from functools import partial
-# tensorflow imports
-import tensorflow as tf
-from keras.layers import Conv2D, Dense, Flatten, InputLayer, Conv2DTranspose, Reshape
+from typing import Dict,Union
+import numpy as np
 # pytorch imports 
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 # alibi-detect imports
-from alibi_detect.cd import KSDrift, MMDDrift, LSDDDrift, CVMDrift
-from alibi_detect.saving import save_detector, load_detector
-from alibi_detect.cd.tensorflow import preprocess_drift
+from alibi_detect.cd import CVMDrift, KSDrift, LSDDDrift, MMDDrift
 from alibi_detect.models.pytorch import trainer
+from alibi_detect.saving import load_detector, save_detector
+
 
 class TrainedAutoencoder():
     def __init__(self,config=None) -> None:
@@ -40,31 +36,6 @@ class TrainedAutoencoder():
         self.encoder = None
         self.decoder = None
 
-    # tensorflow encoder 
-    # def init_default_tf_autoencoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
-    #     tf.random.set_seed(0) # random
-    #     # self.encoding_dim = encoding_dim # check later
-    #     encoder_net = tf.keras.Sequential(
-    #         [
-    #             InputLayer(input_shape=input_shape),
-    #             Conv2D(encoding_dim*2,4,strides=2,padding='same',activation=tf.nn.relu),
-    #             Conv2D(encoding_dim*4,4,strides=2,padding='same',activation=tf.nn.relu),
-    #             Conv2D(encoding_dim*16,4,strides=2,padding='same',activation=tf.nn.relu),
-    #             Flatten(),
-    #             Dense(encoding_dim)
-    #         ]
-    #     )
-    #     decoder_net = tf.keras.Sequential(
-    #         [
-    #             InputLayer(input_shape=input_shape),
-    #             Dense(encoding_dim),
-    #             Reshape(),
-    #             Conv2DTranspose(filters=encoding_dim*16,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
-    #             Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
-    #             Conv2DTranspose(filters=encoding_dim*4,kernel_size=4,strides=4,padding='same',activation=tf.nn.relu),
-    #         ]
-    #     )
-    #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
 
     def init_default_pt_autoencoder(self,dl : DataLoader):
         ENC_DIM = self.config['TAE']['ENC_DIM']
@@ -110,7 +81,7 @@ class TrainedAutoencoder():
 
     # init various types of detectors
     def init_detector(self,detector_type:str, reference_data:np.ndarray, detector_name:str =None, save_dec:bool = False):
-        # try:
+        try:
             if detector_type == 'KS':
                 detector = KSDrift(reference_data,p_val=self.config['GENERAL']['P_VAL'],preprocess_fn=self.encoder_fn)
                 self.detectorKS = detector
@@ -132,13 +103,13 @@ class TrainedAutoencoder():
                 except Exception as e:
                     self.logger.info('Error in init_detector({}:{}): Error Saving Detector'.format(detector_type,detector_name),e)
 
-        # except Exception as e:
-        #         self.logger.exception('Error in init_detector({}): Error Initializing Detector'.format(detector_type),e)
+        except Exception as e:
+                self.logger.exception('Error in init_detector({}): Error Initializing Detector'.format(detector_type),e)
 
 
     # import detector
     def import_detector(self,path:str, detector_type: str):
-        # try:
+        try:
             if detector_type == 'KS':
                 self.detectorKS = load_detector(path) 
                 self.logger.info('KS Detector imported')
@@ -153,12 +124,11 @@ class TrainedAutoencoder():
                 self.logger.info('LSDD Detector imported')
             else:
                 raise ValueError('Invalid Detector Type')
-        # except Exception as e:
-        #         self.logger.exception('Error in import_KS_detector(): Error Importing Detector',e)
+        except Exception as e:
+                self.logger.exception('Error in import_KS_detector(): Error Importing Detector',e)
                  
     # make prediction
     def make_prediction(self,target_data:np.ndarray, detector_type :str) ->Dict[Dict[str, str], Dict[str, Union[np.ndarray,int,float] ]]:
-        labels = ['No!', 'Yes!']
         if detector_type == 'KS' and self.detectorKS is not None:
             preds = self.detectorKS.predict(x=target_data) 
         elif detector_type == 'MMD' and self.detectorMMD is not None:
@@ -169,28 +139,5 @@ class TrainedAutoencoder():
             preds = self.detectorLSDD.predict(x=target_data) 
         else:
             raise ValueError('Wrong Detector Type / No {} detector initialized'.format(detector_type))
-
-            
-        # print('Drift? {}'.format(labels[preds['data']['is_drift']]))
-        # print('Feature-wise p-values:')
-        # print(preds['data']['p_val'])
-        # print('len:{}'.format(len(preds['data']['p_val']))) 
             
         return preds
-
-    # TODO: install required package / delete this 
-    # pytorch encoder expects images in (channels, height, width) format
-    # def init_default_pt_encoder(self,encoding_dim :int,input_shape : Tuple[int,int,int],batch_size :int):
-    #     torch.manual_seed(0)
-    #     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    #     encoder_net = nn.Sequential(
-    #         nn.Conv2d(in_channels=input_shape[0],out_channels=input_shape[1]*2,kernel_size=4,stride=2,padding=0),
-    #         nn.ReLU(),
-    #         nn.Conv2d(in_channels=input_shape[1]*2,out_channels=input_shape[1]*4,kernel_size=4,stride=2,padding=0),
-    #         nn.ReLU(),
-    #         nn.Conv2d(in_channels=input_shape[1]*4,out_channels=input_shape[1]*16,kernel_size=4,stride=2,padding=0),
-    #         nn.ReLU(),
-    #         nn.Flatten(),
-    #         nn.Linear(in_features=input_shape[1]*64,out_features=encoding_dim)
-    #     ).to(device=device).eval()
-    #     return partial(preprocess_drift,model=encoder_net,batch_size=batch_size)
