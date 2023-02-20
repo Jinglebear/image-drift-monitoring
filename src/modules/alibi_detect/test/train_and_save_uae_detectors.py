@@ -1,31 +1,29 @@
-import numpy as np    
-import json 
-import os
+import json
 import sys
-sys.path.append('/home/ubuntu/image-drift-monitoring/src')
-import numpy as np
-from modules.alibi_detect.untrained_encoder import UntrainedAutoencoder
-import json 
 
 import numpy as np
-from modules.alibi_detect.principal_component_analysis import PrincipalComponentAnalysis
-from modules.alibi_detect.trained_autoencoder import TrainedAutoencoder
-from torch.utils.data import TensorDataset, DataLoader
-import json 
-import torch
-import pandas as pd
+
+sys.path.append('/home/ubuntu/image-drift-monitoring/src')
+import json
 from timeit import default_timer as timer
+
+import numpy as np
+
+from modules.alibi_detect.untrained_encoder import UntrainedAutoencoder
+
+
 def main():
 
         with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
                 drift_detection_config = json.load(config_file)
 
-        DATASET_NAME ='camelyon'
+        DATASET_NAME =''
 
 
         data_train_comp = np.load(drift_detection_config["PATHS"]["DATA_DIR_PATH"])
         data_train = data_train_comp['arr_0']
         size_training = data_train.shape[0]
+        
         np.random.shuffle(data_train)
 
         data_train_init = data_train
@@ -52,10 +50,6 @@ def main():
                         f.write(str(dt2))
 
 
-
-        data_train_comp = None
-        data_train = None
-        myUAE = None
 # ======================================================================================
 # call
 if __name__ == "__main__":
