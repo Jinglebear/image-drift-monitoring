@@ -20,7 +20,7 @@ def main():
         with open('/home/ubuntu/image-drift-monitoring/config/common/drift_detection_config.json') as config_file:
                 drift_detection_config = json.load(config_file)
 
-        for name in ['rxrx1','iwildcam','globalwheat','camelyon']:
+        for name in ['iwildcam','globalwheat','camelyon']:
 
                 
                 if name == 'rxrx1':
@@ -39,29 +39,29 @@ def main():
                 """ RECURRING """
                 DATASET_NAME = name
                 
-                if name != 'rxrx1':
-                        data = {
-                        "50% train 50% init":["{}".format(i+333) for i in range(1,21,1)],
-                        }
-                        df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
+                
+                data = {
+                "50% train 50% init":["{}".format(i+333) for i in range(1,21,1)],
+                }
+                df_new = pd.DataFrame(data,index=["{}".format(i) for i in range(1,21,1)])
 
-                        for i in ['KS','CVM','MMD','LSDD']:
-                                t = timer()
-                                myPCA = PrincipalComponentAnalysis()
-                                myPCA.import_detector(path='{}/{}_pca_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
-                                for j in range(1,21,1):
-                                        test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
-                                        test_j = test_j_comp['arr_0']
-                                        if j == 10:
-                                                res = myPCA.make_prediction(target_data=test_j, detector_type='{}'.format(i))
-                                                dt = timer() - t
-                                                with open('{}/track_time_pca_{}_run_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
-                                                        f.write(str(dt))
-                                        else:
-                                                res = myPCA.make_prediction(target_data=test_j, detector_type='{}'.format(i))
-                                        df_new.loc['{}'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
-                                        
-                                df_new.to_excel('{}_pca_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
+                for i in ['KS','CVM','MMD','LSDD']:
+                        t = timer()
+                        myPCA = PrincipalComponentAnalysis()
+                        myPCA.import_detector(path='{}/{}_pca_{}'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),detector_type='{}'.format(i))
+                        for j in range(1,21,1):
+                                test_j_comp = np.load('{}/{}_test_recurring_{}.npz'.format(drift_detection_config["PATHS"]["DATA_DIR_PATH"],DATASET_NAME,j))
+                                test_j = test_j_comp['arr_0']
+                                if j == 1:
+                                        res = myPCA.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+                                        dt = timer() - t
+                                        with open('{}/track_time_pca_{}_run_test_{}.txt'.format(drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"],DATASET_NAME,i),'w') as f:
+                                                f.write(str(dt))
+                                else:
+                                        res = myPCA.make_prediction(target_data=test_j, detector_type='{}'.format(i))
+                                df_new.loc['{}'.format(j)]['{}'.format("50% train 50% init")] = res['data']['is_drift']
+                                
+                        df_new.to_excel('{}_pca_{}_results_recurring.xlsx'.format(DATASET_NAME,i))
 
                 if name == 'rxrx1':
                         drift_detection_config["PATHS"]["DETECTOR_DIR_PATH"] = '/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_32'
