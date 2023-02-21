@@ -24,14 +24,5 @@ nohup.out
 *.toml
 *.dill
 results_old/
-config/detectors/
-run_night*
-train_and_save_*.ipynb
-Create_96_by*
-PCA_demo_with*
-PCAIncremental*
-UAEIncremental*
-PCASudden*
-TAESudden*
-UAESudden*
-LoadData*
+tmp/
+*.txt
