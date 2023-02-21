@@ -1,1 +1,0 @@
-{'data': {'is_drift': 0, 'distance': 0.010494639165699482, 'p_val': 0.6800000071525574, 'threshold': 0.05, 'distance_threshold': 0.021374043077230453}, 'meta': {'name': 'LSDDDriftTF', 'online': False, 'data_type': None, 'version': '0.11.0', 'detector_type': 'drift', 'backend': 'tensorflow', 'version_warning': False}}
