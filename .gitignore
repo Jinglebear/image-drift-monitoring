@@ -25,4 +25,7 @@ nohup.out
 *.dill
 results_old/
 tmp/
+config/**/*.txt
 *.txt
+!requirements.txt
+config/detectors/*.txt
