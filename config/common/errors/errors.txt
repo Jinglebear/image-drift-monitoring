@@ -21,7 +21,7 @@ Traceback (most recent call last):
     sigma = tf.expand_dims((.5 * tf.sort(tf.reshape(dist, (-1,)))[n_median]) ** .5, axis=0)
 tensorflow.python.framework.errors_impl.InvalidArgumentError: Exception encountered when calling layer 'gaussian_rbf' (type GaussianRBF).
 
-MMD Detector ab 20% Camelyon Train
+MMD Detector from 20% Camelyon Train +
 {{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}} Shape output type is 32-bit  but dim 0 is 3658677169 [Op:Shape]
 
 Call arguments received by layer 'gaussian_rbf' (type GaussianRBF):
@@ -41,7 +41,7 @@ Call arguments received by layer 'gaussian_rbf' (type GaussianRBF):
          0.02086852, -0.03599085]], dtype=float32)
   • infer_sigma=True
 
-LSDD Detector ab 20% Camelyon Train
+LSDD Detector from 20% Camelyon Train +
 name": "InvalidArgumentError",
 	"message": "Exception encountered when calling layer 'gaussian_rbf_2' 
   (type GaussianRBF).\n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}} 
@@ -49,7 +49,7 @@ name": "InvalidArgumentError",
   • x=tf.Tensor(shape=(60487, 96), dtype=float32)\n  • y=tf.Tensor(shape=(60487, 96), dtype=float32)\n  • infer_sigma=True",
 
 
-  MMD Detector ab 40% iWildcam Train
+  MMD Detector from 40% iWildcam Train +
   "name": "InvalidArgumentError",
 	"message": "Exception encountered when calling layer 'gaussian_rbf' (type GaussianRBF).
   \n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}}
@@ -62,7 +62,7 @@ name": "InvalidArgumentError",
    \n       [-0.00322371, -0.01513189, -0.01947758, ...,  0.00487578,\n         0.04058766, -0.01953305]], dtype=float32)\n
    • infer_sigma=True",
 
-   LSDD Detector ab 40% iWildcam Train
+   LSDD Detector from 40% iWildcam Train +
    name": "InvalidArgumentError",
 	"message": "Exception encountered when calling layer 'gaussian_rbf_15' (type GaussianRBF).
   \n\n{{function_node __wrapped__Shape_device_/job:localhost/replica:0/task:0/device:CPU:0}}
