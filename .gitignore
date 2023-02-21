@@ -25,10 +25,10 @@ nohup.out
 *.dill
 results_old/
 tmp/
-config/**/*.txt
-*.txt
+# config/**/*.txt
+# *.txt
 !requirements.txt
-config/detectors/*.txt
+# config/detectors/*.txt
 src/modules/alibi_detect/test/Create_96_by_96_test_split.ipynb
 src/modules/alibi_detect/test/run_night*.py
 config/detectors/RxRx1/PCA_n_32/res_MMD.json
