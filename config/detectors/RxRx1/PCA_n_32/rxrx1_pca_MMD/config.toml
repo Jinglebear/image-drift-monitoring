@@ -1,0 +1,22 @@
+name = "MMDDrift"
+x_ref = "x_ref.npy"
+input_shape = "None"
+data_type = "None"
+x_ref_preprocessed = true
+backend = "tensorflow"
+p_val = 0.05
+preprocess_at_init = true
+update_x_ref = "None"
+kernel = "None"
+sigma = "None"
+configure_kernel_from_x_ref = true
+n_permutations = 100
+batch_size_permutations = 1000000
+device = "None"
+
+[meta]
+version = "0.11.0"
+version_warning = false
+
+[preprocess_fn]
+src = "preprocess_fn/function.dill"

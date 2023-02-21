@@ -1,0 +1,21 @@
+name = "LSDDDrift"
+x_ref = "x_ref.npy"
+input_shape = "None"
+data_type = "None"
+x_ref_preprocessed = true
+backend = "tensorflow"
+p_val = 0.05
+preprocess_at_init = true
+update_x_ref = "None"
+sigma = "None"
+n_permutations = 100
+n_kernel_centers = "None"
+lambda_rd_max = 0.2
+device = "None"
+
+[meta]
+version = "0.11.0"
+version_warning = false
+
+[preprocess_fn]
+src = "preprocess_fn/function.dill"

@@ -1,0 +1,17 @@
+name = "CVMDrift"
+x_ref = "x_ref.npy"
+input_shape = "None"
+data_type = "None"
+x_ref_preprocessed = true
+p_val = 0.05
+preprocess_at_init = true
+update_x_ref = "None"
+correction = "bonferroni"
+n_features = "None"
+
+[meta]
+version = "0.11.0"
+version_warning = false
+
+[preprocess_fn]
+src = "preprocess_fn/function.dill"
