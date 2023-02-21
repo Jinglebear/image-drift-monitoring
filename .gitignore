@@ -30,3 +30,4 @@ config/**/*.txt
 !requirements.txt
 config/detectors/*.txt
 src/modules/alibi_detect/test/Create_96_by_96_test_split.ipynb
+src/modules/alibi_detect/test/run_night*.py
