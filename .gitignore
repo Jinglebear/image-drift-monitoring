@@ -33,4 +33,6 @@ src/modules/alibi_detect/test/Create_96_by_96_test_split.ipynb
 src/modules/alibi_detect/test/run_night*.py
 config/detectors/RxRx1/PCA_n_32/res_MMD.json
 src/modules/alibi_detect/test/PCA_demo_with_retransform.ipynb
-/home/ubuntu/image-drift-monitoring/src/modules/alibi_detect/test/train_and_save*.ipynb
+/home/ubuntu/image-drift-monitoring/src/modules/alibi_detect/test/train_and_save_pca_detectors.ipynb
+/home/ubuntu/image-drift-monitoring/src/modules/alibi_detect/test/train_and_save_tae_detectors.ipynb
+/home/ubuntu/image-drift-monitoring/src/modules/alibi_detect/test/train_and_save_uae_detectors.ipynb
