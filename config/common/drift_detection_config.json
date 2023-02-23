@@ -1,8 +1,8 @@
 {
     "VERSION" : 0.1,
     "PATHS" : {
-        "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data/rxrx1_v1.0/drifted_data/recurring_drift/96_by_96_transform",
-        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/RxRx1/PCA_n_32"
+        "DATA_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/data/iwildcam_v2.0/drifted_data/recurring_drift/96_by_96_transform",
+        "DETECTOR_DIR_PATH" : "/home/ubuntu/image-drift-monitoring/config/detectors/iWildcam/TAE_n_32"
     },
     "GENERAL": {
         "P_VAL" : 0.05,
